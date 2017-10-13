@@ -1,0 +1,555 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iOS相机开发的踩坑篇 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="camera">
+    <meta name="description" content="这里介绍了一下iOS相机的一些坑，以及一些相机开发的难点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS相机开发的踩坑篇">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2017-01-15-iOS相机开发的踩坑篇.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="这里介绍了一下iOS相机的一些坑，以及一些相机开发的难点。">
+<meta property="og:image" content="http://www.iosxxx.com/../images/camera/1.png">
+<meta property="og:updated_time" content="2017-01-21T04:10:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS相机开发的踩坑篇">
+<meta name="twitter:description" content="这里介绍了一下iOS相机的一些坑，以及一些相机开发的难点。">
+<meta name="twitter:image" content="http://www.iosxxx.com/../images/camera/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2017-01-15-iOS相机开发的踩坑篇.html" title="iOS相机开发的踩坑篇" itemprop="url">iOS相机开发的踩坑篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2017-01-15T14:48:53.000Z" itemprop="datePublished"> 发表于 2017-01-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS相机开发的踩坑篇"><span class="toc-number">1.</span> <span class="toc-text">iOS相机开发的踩坑篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-整体架构"><span class="toc-number">1.1.</span> <span class="toc-text">一. 整体架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-视频录制"><span class="toc-number">1.2.</span> <span class="toc-text">二. 视频录制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-视频参数设置"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">1. 视频参数设置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-录制方向"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">2. 录制方向</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-GPU美颜处理后用CVPixBuffer编码直播"><span class="toc-number">1.3.</span> <span class="toc-text">四. GPU美颜处理后用CVPixBuffer编码直播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-慢动作"><span class="toc-number">1.4.</span> <span class="toc-text">五. 慢动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-延时摄影"><span class="toc-number">1.5.</span> <span class="toc-text">六. 延时摄影</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七-星轨拍摄"><span class="toc-number">1.6.</span> <span class="toc-text">七. 星轨拍摄</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-参考链接"><span class="toc-number">1.7.</span> <span class="toc-text">六. 参考链接</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="iOS相机开发的踩坑篇"><a href="#iOS相机开发的踩坑篇" class="headerlink" title="iOS相机开发的踩坑篇"></a>iOS相机开发的踩坑篇</h1><p>相机的设置,这个demo用GPUImageview为基准，做了一个基础的demo，处理了供底层OpenGL的方向处理，其他功能参考 最后的参考链接可以实现。后面有时间的话我会去慢慢完善，大家有需要的话可以在评论下方写一下，或者加入我们的qq群:237305299。  </p>
+<p>ps:2016年整年基本上都是做avfoundation的开发，自我感觉对苹果这套库应该算是蛮了解了，网上的例子也很多，但是深入了解后发现很多其实坑很多，这篇分享主要是和大家介绍一下坑和难点，基本的用法可以看一下参考链接和下面的图。  </p>
+<h2 id="一-整体架构"><a href="#一-整体架构" class="headerlink" title="一. 整体架构"></a>一. 整体架构</h2><p>这里有一个很大的问题，就是屏幕旋转。现在大部分视频或者直播软件我观察了一下基本上是不支持转动手机方向的。这个的选择会影响整套架构。相应难度也会降低很多。很悲催地我们一开始就要求四个方向。  </p>
+<p>录制架构，之前我使用的都是AVFoundation的AVWritter自己写的，后来发现有一个很大的问题。就是做美颜的时候，录制又会有问题。后来干脆用了GPUMovieWritter去录制。这里自带了音频录制。  </p>
+<p>GPUImageVideoCamera这个大家用的时候建议是继承一个自己写，最起码要看看源码，这个定制的化的东西太多了。并且之后设置慢动作等问题不方便。所以这个我没有用。用了AVFoundation自己的裤，然后模仿这里面的旋转等做了一下openGL的处理。  </p>
+<p>根据上诉所说，我们来整理一下流程：  </p>
+<p><img src="../images/camera/1.png" alt=""> </p>
+<h2 id="二-视频录制"><a href="#二-视频录制" class="headerlink" title="二. 视频录制"></a>二. 视频录制</h2><h4 id="1-视频参数设置"><a href="#1-视频参数设置" class="headerlink" title="1. 视频参数设置"></a>1. 视频参数设置</h4><p>这里是很核心的配置参数，要配合<strong>StreamEye</strong>以及相机捕捉去看自己的录制和系统录制的区别，主要是qa，清晰度等。<br>码率的观看可以用苹果自带的相机软件，然后用Alt+I快捷键弹出一个信息看码率。<br><strong>千万不要用airdrop传文件到电脑</strong>，会导致重新编码。用苹果应用程序里面的相机捕捉工具就可以很好看的去看了。  </p>
+<p>以上几点都是无数实践的踩坑。大家一定要注意，相应参数的设置错误，会导致如果同样是4k的录制，那么你录制的达不到30fps，或者要比系统的录制大小占用空间大很多。下面我提供了一个参考设置，都是经过和系统对比还有实践出来的一些参数。如果有错误，请大家在评论下方告知我，或者加入qq群237305299,不甚感激。    </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSDictionary</span> *videoCompressionProps;</span><br><span class="line"><span class="built_in">NSDictionary</span> *videoSettings;</span><br><span class="line"><span class="keyword">switch</span> (cameraModel.videoResolution) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="built_in">AVCaptureSessionPreset3840x2160</span>:</span><br><span class="line">        videoCompressionProps = @&#123;</span><br><span class="line">                                  <span class="built_in">AVVideoAverageBitRateKey</span>:@(<span class="number">50</span>*<span class="number">1024.0</span>*<span class="number">1024</span>),</span><br><span class="line">                                  <span class="built_in">AVVideoH264EntropyModeKey</span>:<span class="built_in">AVVideoH264EntropyModeCABAC</span>,</span><br><span class="line">                                  <span class="built_in">AVVideoMaxKeyFrameIntervalKey</span>:@(<span class="number">30</span>),</span><br><span class="line">                                  <span class="built_in">AVVideoAllowFrameReorderingKey</span>:@NO,</span><br><span class="line">                                  <span class="built_in">AVVideoExpectedSourceFrameRateKey</span>:@<span class="number">30</span>,</span><br><span class="line">                                  &#125;;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="built_in">AVCaptureSessionPreset1920x1080</span>:</span><br><span class="line">        videoCompressionProps = [<span class="built_in">NSDictionary</span> dictionaryWithObjectsAndKeys:</span><br><span class="line">                                 [<span class="built_in">NSNumber</span> numberWithDouble:<span class="number">18</span>*<span class="number">1024.0</span>*<span class="number">1024</span>], <span class="built_in">AVVideoAverageBitRateKey</span>,</span><br><span class="line">                                 <span class="built_in">AVVideoH264EntropyModeCABAC</span>,<span class="built_in">AVVideoH264EntropyModeKey</span>,</span><br><span class="line">                                 <span class="literal">nil</span>];</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="built_in">AVCaptureSessionPreset1280x720</span>:</span><br><span class="line">        videoCompressionProps = [<span class="built_in">NSDictionary</span> dictionaryWithObjectsAndKeys:</span><br><span class="line">                                 [<span class="built_in">NSNumber</span> numberWithDouble:<span class="number">8</span>*<span class="number">1024.0</span>*<span class="number">1024</span>], <span class="built_in">AVVideoAverageBitRateKey</span>,</span><br><span class="line">                                 <span class="built_in">AVVideoH264EntropyModeCABAC</span>,<span class="built_in">AVVideoH264EntropyModeKey</span>,</span><br><span class="line">                                 <span class="literal">nil</span> ];</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">videoSettings = [<span class="built_in">NSDictionary</span> dictionaryWithObjectsAndKeys:</span><br><span class="line">                               <span class="built_in">AVVideoCodecH264</span>,<span class="built_in">AVVideoCodecKey</span>,</span><br><span class="line">                               videoCompressionProps, <span class="built_in">AVVideoCompressionPropertiesKey</span>,</span><br><span class="line">                               <span class="built_in">AVVideoScalingModeResizeAspectFill</span>,<span class="built_in">AVVideoScalingModeKey</span>,</span><br><span class="line">                               [<span class="built_in">NSNumber</span> numberWithInteger:videoSize.width],<span class="built_in">AVVideoWidthKey</span>,</span><br><span class="line">                               [<span class="built_in">NSNumber</span> numberWithInteger:videoSize.height],<span class="built_in">AVVideoHeightKey</span>,</span><br><span class="line">                               <span class="literal">nil</span>];</span><br><span class="line">    </span><br><span class="line"><span class="keyword">self</span>.writerInput = [<span class="built_in">AVAssetWriterInput</span> assetWriterInputWithMediaType:<span class="built_in">AVMediaTypeVideo</span> outputSettings:videoSettings];</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span>(cameraModel.devicePosition == DJIIPhone_DevicePositionFront)&#123;</span><br><span class="line">    <span class="keyword">self</span>.writerInput.transform = [OSMOMediaUtils getAngleTransformFromScreenOritationFront];</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">   <span class="keyword">self</span>.writerInput.transform = [OSMOMediaUtils getAngleTransformFromScreenOritationBack];</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">self</span>.writerInput.expectsMediaDataInRealTime = <span class="literal">YES</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="2-录制方向"><a href="#2-录制方向" class="headerlink" title="2. 录制方向"></a>2. 录制方向</h4><p>给AVWritter设置一个初始化的Transform,从摄像头过来的CMSampleBuffer直接进入录制流，不要去做屏幕流程。因为不这样的化会出现一个问题。<br>你点击录制视频，这过程中去旋转屏幕，当你支持四个方向的时候，旋转的时候就会出现闪烁。具体可以用苹果自己的相机试一下就一清二楚了。</p>
+<h2 id="四-GPU美颜处理后用CVPixBuffer编码直播"><a href="#四-GPU美颜处理后用CVPixBuffer编码直播" class="headerlink" title="四. GPU美颜处理后用CVPixBuffer编码直播"></a>四. GPU美颜处理后用CVPixBuffer编码直播</h2><ol>
+<li>GPU美颜处理  </li>
+</ol>
+<p><strong>错误处理方法:</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGSize</span> outputSize = &#123;<span class="number">720</span>, <span class="number">1280</span>&#125;;</span><br><span class="line">GPUImageRawDataOutput *rawDataOutput = [[GPUImageRawDataOutput alloc] initWithImageSize:<span class="built_in">CGSizeMake</span>(outputSize.width, outputSize.height) resultsInBGRAFormat:<span class="literal">YES</span>];</span><br><span class="line">[<span class="keyword">self</span>.beautifyFilter addTarget:rawDataOutput];</span><br></pre></td></tr></table></figure>
+<p>将rawDataoutput作为Target加入，然后获取pixbuffer给videotoolbox处理   </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">__<span class="keyword">weak</span> GPUImageRawDataOutput *weakOutput = rawDataOutput;</span><br><span class="line">__<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</span><br><span class="line"></span><br><span class="line">[rawDataOutput setNewFrameAvailableBlock:^&#123;</span><br><span class="line">    __<span class="keyword">strong</span> GPUImageRawDataOutput *strongOutput = weakOutput;</span><br><span class="line">    [strongOutput lockFramebufferForReading];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里就可以获取到添加滤镜的数据了</span></span><br><span class="line">    GLubyte *outputBytes = [strongOutput rawBytesForImage];</span><br><span class="line">    <span class="built_in">NSInteger</span> bytesPerRow = [strongOutput bytesPerRowInOutput];</span><br><span class="line">    CVPixelBufferRef pixelBuffer = <span class="literal">NULL</span>;</span><br><span class="line">    CVPixelBufferCreateWithBytes(kCFAllocatorDefault, outputSize.width, outputSize.height, kCVPixelFormatType_32BGRA, outputBytes, bytesPerRow, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, &amp;pixelBuffer);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 之后可以利用VideoToolBox进行硬编码再结合rtmp协议传输视频流了</span></span><br><span class="line">    [weakSelf encodeWithCVPixelBufferRef:pixelBuffer];</span><br><span class="line"></span><br><span class="line">    [strongOutput unlockFramebufferAfterReading];</span><br><span class="line">    <span class="built_in">CFRelease</span>(pixelBuffer);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p>大家可以看一下为什么我不推荐这种方法，CVPixelBufferCreateWithBytes这里是很耗时的，要重新创建。  </p>
+<p><strong>正确处理方法:</strong><br>正确的方法建议大家看一下GPUFrameBuffer，里面有一个renderTarget，加一个类别去获取renderTarget（CVPixBuffer)，我们取出来的时候lock一下，用完unlock一下就好了。</p>
+<h2 id="五-慢动作"><a href="#五-慢动作" class="headerlink" title="五. 慢动作"></a>五. 慢动作</h2><p><a href="//https://developer.apple.com/library/mac/documentation/AVFoundation/Reference/AVCaptureDevice_Class/index.html">慢动作设置</a>,这里的技术原理实则以指定超过60fps去执行一个录制，比如240fps，然后将240fps按照30fps去写入数据填充时间段，所以就有了慢动作效果。下面的代码是设置最大速度。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">-(<span class="keyword">void</span>)configureCameraForHighestFrameRate:(<span class="built_in">AVCaptureDevice</span>*) device</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">AVCaptureDeviceFormat</span> *bestFormat = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">AVFrameRateRange</span> *bestFrameRateRange = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="built_in">AVCaptureDeviceFormat</span> *format <span class="keyword">in</span> [device formats] ) &#123;</span><br><span class="line">        <span class="keyword">for</span> ( <span class="built_in">AVFrameRateRange</span> *range <span class="keyword">in</span> format.videoSupportedFrameRateRanges ) &#123;</span><br><span class="line">            <span class="keyword">if</span> ( range.maxFrameRate &gt; bestFrameRateRange.maxFrameRate ) &#123;</span><br><span class="line">                bestFormat = format;</span><br><span class="line">                bestFrameRateRange = range;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> ( bestFormat ) &#123;</span><br><span class="line">        <span class="keyword">if</span> ( [device lockForConfiguration:<span class="literal">NULL</span>] == <span class="literal">YES</span> ) &#123;</span><br><span class="line">            device.activeFormat = bestFormat;</span><br><span class="line">            device.activeVideoMinFrameDuration = bestFrameRateRange.minFrameDuration;</span><br><span class="line">            device.activeVideoMaxFrameDuration = bestFrameRateRange.minFrameDuration;</span><br><span class="line">            [device unlockForConfiguration];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="六-延时摄影"><a href="#六-延时摄影" class="headerlink" title="六. 延时摄影"></a>六. 延时摄影</h2><p>由于系统是每秒回调30次，那么现在我们自己定时器每秒取一张图，然后利用<code>AVAssetWriterInputPixelBufferAdaptor</code>和<code>AVAssetWriterInput</code>,还有<code>AVAssetWriter</code>去用图片组帧视频。</p>
+<h2 id="七-星轨拍摄"><a href="#七-星轨拍摄" class="headerlink" title="七. 星轨拍摄"></a>七. 星轨拍摄</h2><p>利用GPUBlenderFilter的双输入通道即可，叠加加上。生成照片之前记得把滤镜useNextCapture.</p>
+<h2 id="六-参考链接"><a href="#六-参考链接" class="headerlink" title="六. 参考链接"></a>六. 参考链接</h2><ol>
+<li><p>用来拍照和录像的官方demo<a href="https://developer.apple.com/library/prerelease/content/samplecode/AVCam/Introduction/Intro.html" target="_blank" rel="external">https://developer.apple.com/library/prerelease/content/samplecode/AVCam/Introduction/Intro.html</a></p>
+</li>
+<li><p>苹果官方的关于拍照录像的一个综合性的demo，我也是参照这个做的<a href="https://developer.apple.com/library/prerelease/content/samplecode/AVCamManual/Introduction/Intro.html" target="_blank" rel="external">https://developer.apple.com/library/prerelease/content/samplecode/AVCamManual/Introduction/Intro.html</a>  </p>
+</li>
+<li><p>GPU直播<a href="http://www.jianshu.com/p/dde412cab8db" target="_blank" rel="external">iOS中为直播APP集成美颜功能</a>  </p>
+</li>
+<li><p>录制视频，分段录制<a href="https://github.com/xcysuccess/videoRecordDemo" target="_blank" rel="external">github地址</a></p>
+</li>
+<li><p>扩展GPU支持视频录制暂停和恢复.支持闪关灯开启和关闭.<a href="https://github.com/leanlyne/GPUImageExtend" target="_blank" rel="external">GPUImageExtend</a></p>
+</li>
+<li><p>使用 AVAssetWriter 录制小视频,声音的录制也在里面<a href="http://www.jianshu.com/p/01eb06654326" target="_blank" rel="external">使用 AVAssetWriter 录制小视频,</a></p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2017-01-15-iOS相机开发的踩坑篇.html" data-title="iOS相机开发的踩坑篇 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2017-03-27-iOS的nstimer与kvo的自释放.html" title="iOS的NSTimer与KVO的自释放">
+  <strong>上一篇：</strong><br/>
+  <span>
+  iOS的NSTimer与KVO的自释放</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016-11-27-UITextField最大字符数和最大字节数的限制.html"  title="UITextField最大字符数和最大字节数的限制">
+ <strong>下一篇：</strong><br/> 
+ <span>UITextField最大字符数和最大字节数的限制
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS相机开发的踩坑篇"><span class="toc-number">1.</span> <span class="toc-text">iOS相机开发的踩坑篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-整体架构"><span class="toc-number">1.1.</span> <span class="toc-text">一. 整体架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-视频录制"><span class="toc-number">1.2.</span> <span class="toc-text">二. 视频录制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-视频参数设置"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">1. 视频参数设置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-录制方向"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">2. 录制方向</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-GPU美颜处理后用CVPixBuffer编码直播"><span class="toc-number">1.3.</span> <span class="toc-text">四. GPU美颜处理后用CVPixBuffer编码直播</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-慢动作"><span class="toc-number">1.4.</span> <span class="toc-text">五. 慢动作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-延时摄影"><span class="toc-number">1.5.</span> <span class="toc-text">六. 延时摄影</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七-星轨拍摄"><span class="toc-number">1.6.</span> <span class="toc-text">七. 星轨拍摄</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-参考链接"><span class="toc-number">1.7.</span> <span class="toc-text">六. 参考链接</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

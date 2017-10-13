@@ -1,0 +1,558 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iOS中的SVG与iconFont详解 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="iconfont,svg">
+    <meta name="description" content="iOS中的SVG与iconFont详解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS中的SVG与iconFont详解">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2015-10-07-ioszhong-de-svgyu-iconfontxiang-jie.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="iOS中的SVG与iconFont详解">
+<meta property="og:image" content="http://www.iosxxx.com/images/iconfont/1.png">
+<meta property="og:updated_time" content="2016-06-02T14:20:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS中的SVG与iconFont详解">
+<meta name="twitter:description" content="iOS中的SVG与iconFont详解">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/iconfont/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015-10-07-ioszhong-de-svgyu-iconfontxiang-jie.html" title="iOS中的SVG与iconFont详解" itemprop="url">iOS中的SVG与iconFont详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-07T08:52:41.000Z" itemprop="datePublished"> 发表于 2015-10-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-SVG"><span class="toc-number">1.</span> <span class="toc-text">一. SVG</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-概念："><span class="toc-number">1.1.</span> <span class="toc-text">1. 概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-什么是SVG？"><span class="toc-number">1.2.</span> <span class="toc-text">2. 什么是SVG？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-优势"><span class="toc-number">1.3.</span> <span class="toc-text">3. 优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-查看-SVG-文件"><span class="toc-number">1.4.</span> <span class="toc-text">4. 查看 SVG 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-svg实战篇"><span class="toc-number">1.5.</span> <span class="toc-text">5. svg实战篇</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-第三方库"><span class="toc-number">1.6.</span> <span class="toc-text">6. 第三方库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-iconFont"><span class="toc-number">2.</span> <span class="toc-text">二. iconFont</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-功能介绍"><span class="toc-number">2.1.</span> <span class="toc-text">1. 功能介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-制作好之后，我们把ttf加载到工程"><span class="toc-number">2.2.</span> <span class="toc-text">2. 制作好之后，我们把ttf加载到工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-如果想转换成UIImageview"><span class="toc-number">2.3.</span> <span class="toc-text">3. 如果想转换成UIImageview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-可能某时我们想要圆角效果"><span class="toc-number">2.4.</span> <span class="toc-text">4. 可能某时我们想要圆角效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-大小性能"><span class="toc-number">2.5.</span> <span class="toc-text">5. 大小性能</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="一-SVG"><a href="#一-SVG" class="headerlink" title="一. SVG"></a>一. SVG</h2><h3 id="1-概念："><a href="#1-概念：" class="headerlink" title="1. 概念："></a>1. 概念：</h3><p>SVG 是使用 XML 来描述二维图形和绘图程序的语言。</p>
+<h3 id="2-什么是SVG？"><a href="#2-什么是SVG？" class="headerlink" title="2. 什么是SVG？"></a>2. 什么是SVG？</h3><ol>
+<li>SVG 指可伸缩矢量图形 (Scalable Vector Graphics)  </li>
+<li>SVG 用来定义用于网络的基于矢量的图形  </li>
+<li>SVG 使用 XML 格式定义图形  </li>
+<li>SVG 图像在放大或改变尺寸的情况下其图形质量不会有所损失  </li>
+<li>SVG 是万维网联盟的标准  </li>
+<li>SVG 与诸如 DOM 和 XSL 之类的 W3C 标准是一个整体  </li>
+</ol>
+<h3 id="3-优势"><a href="#3-优势" class="headerlink" title="3. 优势"></a>3. 优势</h3><ol>
+<li>SVG 可被非常多的工具读取和修改（比如记事本）<a id="more"></a>  </li>
+<li>SVG 与 JPEG 和 GIF 图像比起来，尺寸更小，且可压缩性更强。  </li>
+<li>SVG 是可伸缩的  </li>
+<li>SVG 图像可在任何的分辨率下被高质量地打印  </li>
+<li>SVG 可在图像质量不下降的情况下被放大  </li>
+<li>SVG 图像中的文本是可选的，同时也是可搜索的（很适合制作地图）  </li>
+<li>SVG 可以与 Java 技术一起运行  </li>
+<li>SVG 是开放的标准  </li>
+<li>SVG 文件是纯粹的 XML  </li>
+</ol>
+<h3 id="4-查看-SVG-文件"><a href="#4-查看-SVG-文件" class="headerlink" title="4. 查看 SVG 文件"></a>4. 查看 SVG 文件</h3><p>今天，所有浏览器均支持 SVG 文件，不过需要安装插件的 Internet Explorer 除外。插件是免费的，比如 Adobe SVG Viewer  </p>
+<h3 id="5-svg实战篇"><a href="#5-svg实战篇" class="headerlink" title="5. svg实战篇"></a>5. svg实战篇</h3><p>1.解码  </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NSString *mySVGString = [[NSString alloc] initWithContentsOfFile:pathOfSVGFile encoding:NSStringEncodingConversionExternalRepresentation error:&amp;error];  </span><br><span class="line">mySVGString的值:  </span><br><span class="line"></span><br><span class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><br><span class="line">&lt;!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  --&gt;</span><br><span class="line">&lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;</span><br><span class="line">&lt;svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"</span><br><span class="line"> width="1024px" height="768px" viewBox="0 0 1024 768" enable-background="new 0 0 1024 768" xml:space="preserve"&gt;</span><br><span class="line">&lt;path fill="#FFFFFF" stroke="#000000" stroke-width="5" stroke-miterlimit="10" d="M176.17,369.617</span><br><span class="line">c0,0,335.106-189.361,214.894,38.298c-120.212,227.659,129.787,282.978,178.723,42.553C618.724,210.042,834.681,87.702,790,307.915"</span><br><span class="line">/&gt;</span><br><span class="line">&lt;/svg&gt;</span><br></pre></td></tr></table></figure>
+<p>SVG 路径 - <code>path</code>  </p>
+<p><path></path> 元素用于定义一个路径。<br>下面的命令可用于路径数据： </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">* M = moveto  </span><br><span class="line">* L = lineto  </span><br><span class="line">* H = horizontal lineto  </span><br><span class="line">* V = vertical lineto  </span><br><span class="line">* C = curveto  </span><br><span class="line">* S = smooth curveto  </span><br><span class="line">* Q = quadratic Bézier curve  </span><br><span class="line">* T = smooth quadratic Bézier curveto  </span><br><span class="line">* A = elliptical Arc  </span><br><span class="line">* Z = closepath</span><br></pre></td></tr></table></figure>
+<p>注意：以上所有命令均允许小写字母。大写表示绝对定位，小写表示相对定位。<br>更多请参考请看<strong><a href="http://www.runoob.com/svg/svg-path.html" target="_blank" rel="external">SVG关键字说明</a></strong>  </p>
+<h3 id="6-第三方库"><a href="#6-第三方库" class="headerlink" title="6. 第三方库"></a>6. 第三方库</h3><p>既然有这么多关键字，我们自己写dom解析的工作量太大，故而思路转向去寻找第三方开源库  </p>
+<p><strong><a href="https://github.com/SVGKit/SVGKit" target="_blank" rel="external">Github-SVG解析库</a></strong><br><strong>Framework安装包大小:<code>6.4MB</code></strong></p>
+<h2 id="二-iconFont"><a href="#二-iconFont" class="headerlink" title="二. iconFont"></a>二. iconFont</h2><h3 id="1-功能介绍"><a href="#1-功能介绍" class="headerlink" title="1. 功能介绍"></a>1. 功能介绍</h3><p>在网页的世界里，图标字体的应用日趋广泛，国内以阿里系的产品为应用典型，他们更是参考谷歌搭建了国内首个图标字体平台（<a href="http://www.iconfont.cn" target="_blank" rel="external">http://www.iconfont.cn</a>），除了提供在线图标字体制作、本地下载之外，还支持CDN在线存储与使用。  </p>
+<h3 id="2-制作好之后，我们把ttf加载到工程"><a href="#2-制作好之后，我们把ttf加载到工程" class="headerlink" title="2. 制作好之后，我们把ttf加载到工程"></a>2. 制作好之后，我们把ttf加载到工程</h3><p>修改<code>Supporting Files/Info.plist</code>文件，增加<code>Fonts provided by application</code>键值,把文件名填入。比如<code>Item0</code>对应的是<code>fonthello.ttf</code></p>
+<h3 id="3-如果想转换成UIImageview"><a href="#3-如果想转换成UIImageview" class="headerlink" title="3. 如果想转换成UIImageview"></a>3. 如果想转换成UIImageview</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(size, <span class="literal">NO</span>, <span class="number">0.0</span>f);</span><br><span class="line">[textContent drawInRect:textRect withAttributes:@&#123;<span class="built_in">NSFontAttributeName</span> : font,<span class="built_in">NSForegroundColorAttributeName</span> : iconColor,<span class="built_in">NSBackgroundColorAttributeName</span> : bgColor&#125;];</span><br><span class="line"><span class="comment">//Image returns</span></span><br><span class="line"><span class="built_in">UIImage</span> * image = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line"><span class="built_in">UIGraphicsEndImageContext</span>();</span><br></pre></td></tr></table></figure>
+<p>此时我们可以得到UIImage，即UIImageview  </p>
+<h3 id="4-可能某时我们想要圆角效果"><a href="#4-可能某时我们想要圆角效果" class="headerlink" title="4. 可能某时我们想要圆角效果"></a>4. 可能某时我们想要圆角效果</h3><p>这里有四种方法<a href="http://blog.csdn.net/u012282115/article/details/39007019" target="_blank" rel="external">改变成圆角</a>,实践得出结论，1，4的方法耗时严重。第2个方法过于死板，不适合任意角度设置。第三个方法是比较好的，而且最贵的的是可以在<em>异步</em>执行  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UIImage</span>*)iconImageWithWidth:(<span class="built_in">UIImage</span>*) image width:(<span class="keyword">double</span>)width cornerRadius:(<span class="keyword">double</span>)radius</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(<span class="built_in">CGSizeMake</span>(width, width), <span class="literal">NO</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGSize</span> imgSize = image.size;</span><br><span class="line">    <span class="built_in">CGFloat</span> mid = width / <span class="number">2</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGContextBeginPath</span>(context);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">0</span>, mid);</span><br><span class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">0</span>, <span class="number">0</span>, mid, <span class="number">0</span>, radius);</span><br><span class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, width, <span class="number">0</span>, width, mid, radius);</span><br><span class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, width, width, mid, width, radius);</span><br><span class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">0</span>, width, <span class="number">0</span>, mid, radius);</span><br><span class="line">    <span class="built_in">CGContextClosePath</span>(context);                                              <span class="comment">//4</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGContextClip</span>(context);                                                    <span class="comment">//5</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (imgSize.width &gt; imgSize.height) &#123;</span><br><span class="line">        <span class="keyword">double</span> rate = imgSize.width / imgSize.height;</span><br><span class="line">        <span class="comment">//CGContextDrawImage(context, CGRectMake(floor(-(rate-1)/2*width), 0, floor(rate*width), floor(width)), self.CGImage);</span></span><br><span class="line">        [image drawInRect:<span class="built_in">CGRectMake</span>(floor(-(rate<span class="number">-1</span>)/<span class="number">2</span>*width), <span class="number">0</span>, floor(rate*width), floor(width))];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">double</span> rate = imgSize.height / imgSize.width;</span><br><span class="line">        <span class="comment">//CGContextDrawImage(context, CGRectMake(0, floor(-(rate-1)/2*width), floor(width), floor(rate*width)), self.CGImage);</span></span><br><span class="line">        [image drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, floor(-(rate<span class="number">-1</span>)/<span class="number">2</span>*width), floor(width), floor(rate*width))];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIImage</span>* img = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">    <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> img;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-大小性能"><a href="#5-大小性能" class="headerlink" title="5. 大小性能"></a>5. 大小性能</h3><ol>
+<li><p>关于大小<br> 之前网上有一个人做了测试，同时存在2x和3x图片的情况下<br> <img src="/images/iconfont/1.png" alt="iconfont大小" title="iconfont大小"><br> 这个根据自己项目而定，但是也能极大程度去优化了  </p>
+</li>
+<li><p>性能<br> 加载速度非常快，可以忽略不计,<em>iphone5手机</em>平均加载一个在5ms左右</p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2015-10-07-ioszhong-de-svgyu-iconfontxiang-jie.html" data-title="iOS中的SVG与iconFont详解 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015-10-12-iosyi-bu-du-xie-zong-jie-zhi-nsdicionary.html" title="iOS异步读写总结之NSDictionary">
+  <strong>上一篇：</strong><br/>
+  <span>
+  iOS异步读写总结之NSDictionary</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015-09-24-ios9-dot-0de-xi-tong-bugdao-zhi-de-objc-msgsendcuo-wu-de-jie-jue-fang-an.html"  title="ios9.0的系统bug导致的objc_msgSend错误的解决方案">
+ <strong>下一篇：</strong><br/> 
+ <span>ios9.0的系统bug导致的objc_msgSend错误的解决方案
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-SVG"><span class="toc-number">1.</span> <span class="toc-text">一. SVG</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-概念："><span class="toc-number">1.1.</span> <span class="toc-text">1. 概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-什么是SVG？"><span class="toc-number">1.2.</span> <span class="toc-text">2. 什么是SVG？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-优势"><span class="toc-number">1.3.</span> <span class="toc-text">3. 优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-查看-SVG-文件"><span class="toc-number">1.4.</span> <span class="toc-text">4. 查看 SVG 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-svg实战篇"><span class="toc-number">1.5.</span> <span class="toc-text">5. svg实战篇</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-第三方库"><span class="toc-number">1.6.</span> <span class="toc-text">6. 第三方库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-iconFont"><span class="toc-number">2.</span> <span class="toc-text">二. iconFont</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-功能介绍"><span class="toc-number">2.1.</span> <span class="toc-text">1. 功能介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-制作好之后，我们把ttf加载到工程"><span class="toc-number">2.2.</span> <span class="toc-text">2. 制作好之后，我们把ttf加载到工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-如果想转换成UIImageview"><span class="toc-number">2.3.</span> <span class="toc-text">3. 如果想转换成UIImageview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-可能某时我们想要圆角效果"><span class="toc-number">2.4.</span> <span class="toc-text">4. 可能某时我们想要圆角效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-大小性能"><span class="toc-number">2.5.</span> <span class="toc-text">5. 大小性能</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

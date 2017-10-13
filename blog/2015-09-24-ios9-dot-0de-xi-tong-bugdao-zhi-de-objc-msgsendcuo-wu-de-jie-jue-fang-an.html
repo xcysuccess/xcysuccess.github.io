@@ -1,0 +1,550 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>ios9.0的系统bug导致的objc_msgSend错误的解决方案 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="debug,异常,fishhook,objc_msgSend">
+    <meta name="description" content="对遇到系统错误的时候，我们如何去分析解决提供一种思路">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ios9.0的系统bug导致的objc_msgSend错误的解决方案">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2015-09-24-ios9-dot-0de-xi-tong-bugdao-zhi-de-objc-msgsendcuo-wu-de-jie-jue-fang-an.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="对遇到系统错误的时候，我们如何去分析解决提供一种思路">
+<meta property="og:image" content="http://www.iosxxx.com/images/ios9crash/1.png">
+<meta property="og:image" content="http://www.iosxxx.com/images/ios9crash/4.jpg">
+<meta property="og:image" content="http://www.iosxxx.com/images/ios9crash/3.jpeg">
+<meta property="og:updated_time" content="2016-06-02T14:19:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ios9.0的系统bug导致的objc_msgSend错误的解决方案">
+<meta name="twitter:description" content="对遇到系统错误的时候，我们如何去分析解决提供一种思路">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/ios9crash/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015-09-24-ios9-dot-0de-xi-tong-bugdao-zhi-de-objc-msgsendcuo-wu-de-jie-jue-fang-an.html" title="ios9.0的系统bug导致的objc_msgSend错误的解决方案" itemprop="url">ios9.0的系统bug导致的objc_msgSend错误的解决方案</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-09-24T11:34:03.000Z" itemprop="datePublished"> 发表于 2015-09-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装lldb的malloc命令"><span class="toc-number">1.1.</span> <span class="toc-text">安装lldb的malloc命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-分析"><span class="toc-number">2.</span> <span class="toc-text">一. 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">2.1.</span> <span class="toc-text">问题:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证过程"><span class="toc-number">2.2.</span> <span class="toc-text">验证过程:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结果"><span class="toc-number">2.3.</span> <span class="toc-text">结果:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-过程分析"><span class="toc-number">3.</span> <span class="toc-text">二. 过程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-查看崩溃源"><span class="toc-number">3.1.</span> <span class="toc-text">1. 查看崩溃源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-异常截获"><span class="toc-number">3.2.</span> <span class="toc-text">2. 异常截获</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-解决方案"><span class="toc-number">4.</span> <span class="toc-text">三. 解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-hook截获"><span class="toc-number">4.1.</span> <span class="toc-text">1. hook截获</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-替换判断"><span class="toc-number">4.2.</span> <span class="toc-text">2. 替换判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-结论"><span class="toc-number">4.3.</span> <span class="toc-text">3. 结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#demo下载"><span class="toc-number">5.</span> <span class="toc-text">demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">6.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>看此篇文章之前请先阅读<a href="http://www.iosxxx.com/blog/categories/debug/">xcode调试效率</a>.<br>ios9.0上遇到一个问题，<code>UITableView</code>中长按<code>section</code>，如果我们的交互中要求弹出menu菜单，那么就会出现如图所示的必现崩溃<br><img src="/images/ios9crash/1.png" alt="&quot;操作&quot;">  </p>
+<h3 id="安装lldb的malloc命令"><a href="#安装lldb的malloc命令" class="headerlink" title="安装lldb的malloc命令"></a>安装<code>lldb</code>的<code>malloc</code>命令</h3><pre><code>vim ~/.lldbinit
+command script import lldb.macosx.heap
+按一下esc 
+wq 保存退出
+</code></pre><h2 id="一-分析"><a href="#一-分析" class="headerlink" title="一. 分析"></a>一. 分析</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题:"></a>问题:</h3><p>1.这个NSDictionary到底是什么?是<code>UITableView</code>的数据源吗？<br>2.如果是数据源是否是多线程导致的呢？(<code>NSDictionary</code>在多线程下如未处理好极容易崩溃,<code>set</code>和<code>get</code>同时调用的时候,一个对象被<code>remove</code>之后野指针了，然后<code>get</code>操作会立马导致崩溃)  </p>
+<ol>
+<li>是否是<code>mrc</code>导致问题？  </li>
+</ol>
+<h3 id="验证过程"><a href="#验证过程" class="headerlink" title="验证过程:"></a>验证过程:</h3><p>1.由于工程比较大，建议先写一个demo去做。(大工程的一些配置选项可能导致<code>lldb</code>的某些命令无法使用），这一点耗费了我们很大的精力去分析<code>NSZombie</code>的<code>malloc</code>历史，都没有结果  </p>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果:"></a>结果:</h3><p>在工程中拆分出demo之后，由于我们根本没有<code>NSDictionary</code>，所以排除了这种情况，但是为什么会有这个问题呢。这个<code>NSDictionay</code>又是什么呢?<br><a id="more"></a></p>
+<h2 id="二-过程分析"><a href="#二-过程分析" class="headerlink" title="二. 过程分析"></a>二. 过程分析</h2><h3 id="1-查看崩溃源"><a href="#1-查看崩溃源" class="headerlink" title="1. 查看崩溃源"></a>1. 查看崩溃源</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">(lldb) command script import <span class="string">"lldb.macosx.heap"</span></span><br><span class="line">(lldb) bt</span><br><span class="line">* thread <span class="meta">#1: tid = 0xbe55, 0x0000000100ded805 libobjc.A.dylib`objc_msgSend + 5, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=1, address=0x1)</span></span><br><span class="line">    frame <span class="meta">#0: 0x0000000100ded805 libobjc.A.dylib`objc_msgSend + 5</span></span><br><span class="line">    frame <span class="meta">#1: 0x00000001012fb1a5 CoreFoundation`-[NSDictionary descriptionWithLocale:indent:] + 373</span></span><br><span class="line">    frame <span class="meta">#2: 0x000000010097d3f4 Foundation`_NSDescriptionWithLocaleFunc + 64</span></span><br><span class="line">    frame <span class="meta">#3: 0x000000010124fe4d CoreFoundation`__CFStringAppendFormatCore + 9597</span></span><br><span class="line">    frame <span class="meta">#4: 0x000000010133c563 CoreFoundation`_CFStringCreateWithFormatAndArgumentsAux2 + 259</span></span><br><span class="line">    frame <span class="meta">#5: 0x000000010134ce0a CoreFoundation`_CFLogvEx2 + 154</span></span><br><span class="line">    frame <span class="meta">#6: 0x000000010134cf6b CoreFoundation`_CFLogvEx3 + 171</span></span><br><span class="line">    frame <span class="meta">#7: 0x0000000100a53d5e Foundation`_NSLogv + 117</span></span><br><span class="line">    frame <span class="meta">#8: 0x00000001009a35e2 Foundation`NSLog + 152</span></span><br><span class="line">  * frame <span class="meta">#9: 0x000000010183fc5e UIKit`-[UITableView reloadData] + 1853</span></span><br><span class="line">    frame <span class="meta">#10: 0x00000001008d436c Test`-[SectionHeader showPendingMenu](self=0x00007fab6b443250, _cmd=<span class="meta-string">"showPendingMenu"</span>) + 572 at FirstViewController.m:47</span></span><br><span class="line">    frame <span class="meta">#11: 0x00000001008d411b Test`-[SectionHeader longPress](self=0x00007fab6b443250, _cmd=<span class="meta-string">"longPress"</span>) + 43 at FirstViewController.m:27</span></span><br><span class="line">    frame <span class="meta">#12: 0x0000000101bc6b40 UIKit`_UIGestureRecognizerSendTargetActions + 153</span></span><br><span class="line">    frame <span class="meta">#13: 0x0000000101bc36af UIKit`_UIGestureRecognizerSendActions + 162</span></span><br><span class="line">    frame <span class="meta">#14: 0x0000000101bc1f01 UIKit`-[UIGestureRecognizer _updateGestureWithEvent:buttonEvent:] + 822</span></span><br><span class="line">    frame <span class="meta">#15: 0x0000000101bc93f3 UIKit`___UIGestureRecognizerUpdate_block_invoke809 + 79</span></span><br><span class="line">    frame <span class="meta">#16: 0x0000000101bc9291 UIKit`_UIGestureRecognizerRemoveObjectsFromArrayAndApplyBlocks + 342</span></span><br><span class="line">    frame <span class="meta">#17: 0x0000000101bbaeb4 UIKit`_UIGestureRecognizerUpdate + 2624</span></span><br><span class="line">    frame <span class="meta">#18: 0x00000001012899d7 CoreFoundation`__CFRUNLOOP_IS_CALLING_OUT_TO_AN_OBSERVER_CALLBACK_FUNCTION__ + 23</span></span><br><span class="line">    frame <span class="meta">#19: 0x0000000101289947 CoreFoundation`__CFRunLoopDoObservers + 391</span></span><br><span class="line">    frame <span class="meta">#20: 0x000000010127f59b CoreFoundation`__CFRunLoopRun + 1147</span></span><br><span class="line">    frame <span class="meta">#21: 0x000000010127ee98 CoreFoundation`CFRunLoopRunSpecific + 488</span></span><br><span class="line">    frame <span class="meta">#22: 0x0000000104a5aad2 GraphicsServices`GSEventRunModal + 161</span></span><br><span class="line">    frame <span class="meta">#23: 0x000000010170a676 UIKit`UIApplicationMain + 171</span></span><br><span class="line">    frame <span class="meta">#24: 0x00000001008d4c9f Test`main(argc=1, argv=0x00007fff5f32c618) + 111 at main.m:14</span></span><br><span class="line">    frame <span class="meta">#25: 0x00000001039e992d libdyld.dylib`start + 1</span></span><br><span class="line">    frame <span class="meta">#26: 0x00000001039e992d libdyld.dylib`start + 1</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-异常截获"><a href="#2-异常截获" class="headerlink" title="2. 异常截获"></a>2. 异常截获</h3><p><img src="/images/ios9crash/4.jpg" alt="&quot;操作&quot;"><br>通过条件断点我们查看最后一次调用的地方，然后打印当前寄存器的值  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">(lldb) <span class="keyword">register</span> read</span><br><span class="line">General Purpose Registers:</span><br><span class="line"> rax = <span class="number">0x0000000109a1b001</span>  CoreFoundation`_CFRuntimeGetClassWithTypeID + <span class="number">17</span></span><br><span class="line"> rbx = <span class="number">0x00007feb75041a70</span></span><br><span class="line"> rcx = <span class="number">0x0000000000000000</span></span><br><span class="line"> rdx = <span class="number">0x0000000000000000</span></span><br><span class="line"> rdi = <span class="number">0x00007feb75041a70</span></span><br><span class="line"> rsi = <span class="number">0x0000000109c8db63</span>  <span class="string">"descriptionWithLocale:"</span></span><br><span class="line"> rbp = <span class="number">0x00007fff56c08380</span></span><br><span class="line"> rsp = <span class="number">0x00007fff56c08368</span></span><br><span class="line"> r8 = <span class="number">0x0000000080000000</span></span><br><span class="line"> r9 = <span class="number">0x000000000000001f</span></span><br><span class="line"> r10 = <span class="number">0x00007feb736203e0</span></span><br><span class="line"> r11 = <span class="number">0x0000000109ca0ef0</span>  (<span class="keyword">void</span> *)<span class="number">0x0000000109ca0f18</span>: __NSCFDictionary</span><br><span class="line"> r12 = <span class="number">0x00007feb7346f180</span></span><br><span class="line"> r13 = <span class="number">0x00007fff56c08fe0</span></span><br><span class="line"> r14 = <span class="number">0x0000000000000000</span></span><br><span class="line"> r15 = <span class="number">0x000000010a98788e</span>  <span class="string">"There are visible views left after reusing them all: %@"</span></span><br><span class="line"> rip = <span class="number">0x0000000109a1b010</span>  CoreFoundation`-[<span class="built_in">NSDictionary</span> descriptionWithLocale:]</span><br><span class="line"> rflags = <span class="number">0x0000000000000246</span></span><br><span class="line"> cs = <span class="number">0x000000000000002b</span></span><br><span class="line"> fs = <span class="number">0x0000000000000000</span></span><br><span class="line"> gs = <span class="number">0x0000000000000000</span>  </span><br><span class="line">```	</span><br><span class="line"> </span><br><span class="line">通过  </span><br><span class="line">![<span class="string">"操作"</span>](/images/ios9crash/<span class="number">2.</span>jpg)  </span><br><span class="line">我们可以去找到rdi,这个返回参数。此时去找这个参数的地址  </span><br><span class="line"></span><br><span class="line">```objc</span><br><span class="line">x00007fc93a638050: malloc(    <span class="number">64</span>) -&gt; <span class="number">0x7fc93a638050</span> __NSCFDictionary.NSMutableDictionary.NSDictionary.NSObject.isa</span><br><span class="line">stack[<span class="number">0</span>]: addr = <span class="number">0x7fc93a638050</span>, type=malloc, frames:</span><br><span class="line">[<span class="number">0</span>] <span class="number">0x000000010bb44391</span> libsystem_malloc.dylib`malloc_zone_malloc + <span class="number">107</span></span><br><span class="line">[<span class="number">1</span>] <span class="number">0x00000001091b3c36</span> CoreFoundation`_CFRuntimeCreateInstance + <span class="number">310</span></span><br><span class="line">[<span class="number">2</span>] <span class="number">0x00000001091b3712</span> CoreFoundation`<span class="built_in">CFBasicHashCreate</span> + <span class="number">114</span></span><br><span class="line">[<span class="number">3</span>] <span class="number">0x00000001091b6674</span> CoreFoundation`<span class="built_in">CFDictionaryCreateMutable</span> + <span class="number">212</span></span><br><span class="line">[<span class="number">4</span>] <span class="number">0x00000001097d482e</span> <span class="built_in">UIKit</span>`-[<span class="built_in">UITableView</span> _setupTableViewCommon] + <span class="number">137</span></span><br><span class="line">[<span class="number">5</span>] <span class="number">0x00000001097d4e89</span> <span class="built_in">UIKit</span>`-[<span class="built_in">UITableView</span> initWithFrame:style:] + <span class="number">205</span></span><br><span class="line">[<span class="number">6</span>] <span class="number">0x000000010886e63e</span> Test`-[FirstViewController loadView] + <span class="number">254</span> at FirstViewController.m:<span class="number">0</span></span><br><span class="line">[<span class="number">7</span>] <span class="number">0x000000010982f47c</span> <span class="built_in">UIKit</span>`-[<span class="built_in">UIViewController</span> loadViewIfRequired] + <span class="number">139</span></span><br><span class="line">[<span class="number">8</span>] <span class="number">0x0000000109872c26</span> <span class="built_in">UIKit</span>`-[<span class="built_in">UINavigationController</span> _layoutViewController:] + <span class="number">54</span></span><br></pre></td></tr></table></figure>
+<p><code>CFDictionaryCreateMutable</code>是关键方法，通过它我们知道了如何去分配对象，理想当然，我们得去找到系统的<code>CFDictionary</code>，这时候会发现有一个<code>CFDictionarySetValue</code>的方法  </p>
+<h2 id="三-解决方案"><a href="#三-解决方案" class="headerlink" title="三. 解决方案"></a>三. 解决方案</h2><h3 id="1-hook截获"><a href="#1-hook截获" class="headerlink" title="1. hook截获"></a>1. hook截获</h3><p>要截获<code>CounFoundation</code>库的C方法，普通的oc的<code>swizzle</code>当然是做不到的，但是幸好有<code>facebook</code>提供的<code>fishhook</code>，<code>fishhook</code>原理可以参照<a href="http://blog.csdn.net/yiyaaixuexi/article/details/19094765" target="_blank" rel="external">iOS安全攻防（十七）：Fishhook</a>.<br>我们现在来截获一把,<img src="/images/ios9crash/3.jpeg" alt="&quot;key的值&quot;">，惊喜的事情出现了，此时的<code>key</code>的值竟然是<code>0x01</code>，明显的错误啊！内部实现应该是将某个整形树枝给一个NSObject的指针了。  </p>
+<h3 id="2-替换判断"><a href="#2-替换判断" class="headerlink" title="2. 替换判断"></a>2. 替换判断</h3><pre><code class="objc"><span class="keyword">void</span> my_CFDictionarySetValue(<span class="built_in">CFMutableDictionaryRef</span> theDict, <span class="keyword">const</span> <span class="keyword">void</span> *key, <span class="keyword">const</span> <span class="keyword">void</span> *value) {
+<span class="built_in">NSLog</span>(<span class="string">@"wym Calling my_CFDictionarySetValue, %p, k:%p, v:%p\n"</span>, theDict, key, value);
+<span class="keyword">const</span> <span class="keyword">void</span> *newKey = key;
+<span class="keyword">if</span> ((<span class="keyword">int</span>)key == <span class="number">1</span> &amp;&amp; [<span class="built_in">NSStringFromClass</span>([(__bridge <span class="built_in">NSObject</span> *)value class]) isEqualToString:<span class="string">@"SectionHeader"</span>]) {
+   newKey = (__bridge <span class="keyword">void</span> *)[<span class="built_in">NSNumber</span> numberWithUnsignedInteger:[(__bridge <span class="built_in">NSObject</span> *)value hash]];
+   <span class="comment">//NSLog(@"%@", [NSThread callStackSymbols]);</span>
+}
+orig_CFDictionarySetValue(theDict, newKey, value);
+}
+</code></pre>
+<p>这样我们就不会崩溃了。  </p>
+<h3 id="3-结论"><a href="#3-结论" class="headerlink" title="3. 结论"></a>3. 结论</h3><p>整个事情的来龙去脉已经清楚了，这里提供了只是提供一个思路去解决问题。但是实际开发中不推荐这么去做，这个方法会对app性能有影响，建议用<code>UIButton</code>去模拟规避这个问题。  </p>
+<p>这个问题的解决并不是本人，只是对大神岳明哥的思路进行了总结，一切版权以及所有权归岳明哥所有！非经作者允许不得转载！～</p>
+<h2 id="demo下载"><a href="#demo下载" class="headerlink" title="demo下载"></a>demo下载</h2><p><a href="http://share.weiyun.com/c4301c85ae5243fb57b60c9983764388" target="_blank" rel="external">demo</a></p>
+<h2 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h2><p>1.<a href="http://blog.csdn.net/yiyaaixuexi/article/details/19094765" target="_blank" rel="external">iOS安全攻防（十七）：Fishhook</a><br>2.<a href="http://lldb.llvm.org/lldb-gdb.html" target="_blank" rel="external">lldb官方命令大全</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2015-09-24-ios9-dot-0de-xi-tong-bugdao-zhi-de-objc-msgsendcuo-wu-de-jie-jue-fang-an.html" data-title="ios9.0的系统bug导致的objc_msgSend错误的解决方案 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015-10-07-ioszhong-de-svgyu-iconfontxiang-jie.html" title="iOS中的SVG与iconFont详解">
+  <strong>上一篇：</strong><br/>
+  <span>
+  iOS中的SVG与iconFont详解</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015-08-29-iosyi-chang-bu-huo.html"  title="iOS异常捕获">
+ <strong>下一篇：</strong><br/> 
+ <span>iOS异常捕获
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装lldb的malloc命令"><span class="toc-number">1.1.</span> <span class="toc-text">安装lldb的malloc命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-分析"><span class="toc-number">2.</span> <span class="toc-text">一. 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">2.1.</span> <span class="toc-text">问题:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证过程"><span class="toc-number">2.2.</span> <span class="toc-text">验证过程:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结果"><span class="toc-number">2.3.</span> <span class="toc-text">结果:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-过程分析"><span class="toc-number">3.</span> <span class="toc-text">二. 过程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-查看崩溃源"><span class="toc-number">3.1.</span> <span class="toc-text">1. 查看崩溃源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-异常截获"><span class="toc-number">3.2.</span> <span class="toc-text">2. 异常截获</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-解决方案"><span class="toc-number">4.</span> <span class="toc-text">三. 解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-hook截获"><span class="toc-number">4.1.</span> <span class="toc-text">1. hook截获</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-替换判断"><span class="toc-number">4.2.</span> <span class="toc-text">2. 替换判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-结论"><span class="toc-number">4.3.</span> <span class="toc-text">3. 结论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#demo下载"><span class="toc-number">5.</span> <span class="toc-text">demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">6.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

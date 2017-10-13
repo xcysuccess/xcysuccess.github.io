@@ -1,0 +1,612 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>xcode调试效率 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="xcode调试效率">
+    <meta name="description" content="调试的基本操作，Chisel，以及crashLog查看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xcode调试效率">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2015-06-30-xcodediao-shi-(ru-men-pian)chang-yong-ming-ling.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="调试的基本操作，Chisel，以及crashLog查看">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/7.jpeg">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/1.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/2.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/3.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/4.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/5.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/6.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/xcode/8.jpeg">
+<meta property="og:image" content="http://blog.devtang.com/images/weixin-qr.jpg">
+<meta property="og:updated_time" content="2016-06-02T14:19:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="xcode调试效率">
+<meta name="twitter:description" content="调试的基本操作，Chisel，以及crashLog查看">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/xcode/7.jpeg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015-06-30-xcodediao-shi-(ru-men-pian)chang-yong-ming-ling.html" title="xcode调试效率" itemprop="url">xcode调试效率</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-30T13:24:45.000Z" itemprop="datePublished"> 发表于 2015-06-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基本操作"><span class="toc-number">1.</span> <span class="toc-text">一、基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-视图层次"><span class="toc-number">1.1.</span> <span class="toc-text">1.1. 视图层次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-改变某个取值"><span class="toc-number">1.2.</span> <span class="toc-text">1.2. 改变某个取值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-call改变view的背景色"><span class="toc-number">1.3.</span> <span class="toc-text">1.3. call改变view的背景色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-声明变量"><span class="toc-number">1.4.</span> <span class="toc-text">1.4. 声明变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-打印堆栈"><span class="toc-number">1.5.</span> <span class="toc-text">1.5. 打印堆栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-更改方法返回值"><span class="toc-number">1.6.</span> <span class="toc-text">1.6. 更改方法返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-多线程异常后查看历史对象的malloc分配历史"><span class="toc-number">1.7.</span> <span class="toc-text">1.7. 多线程异常后查看历史对象的malloc分配历史</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-寄存器查找对象"><span class="toc-number">1.8.</span> <span class="toc-text">1.8. 寄存器查找对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见问题－打印无效"><span class="toc-number">1.9.</span> <span class="toc-text">常见问题－打印无效</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、调试进阶"><span class="toc-number">2.</span> <span class="toc-text">二、调试进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-监听某个方法的调用"><span class="toc-number">2.1.</span> <span class="toc-text">2.1. 监听某个方法的调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-image寻址-找到崩溃行"><span class="toc-number">2.2.</span> <span class="toc-text">2.2. image寻址,找到崩溃行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-crash日志分析，读取符号表"><span class="toc-number">2.3.</span> <span class="toc-text">2.3. crash日志分析，读取符号表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤如下图所示："><span class="toc-number">2.4.</span> <span class="toc-text">步骤如下图所示：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-观察实例变量的变化"><span class="toc-number">2.5.</span> <span class="toc-text">2.4 观察实例变量的变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-打印所有方法进行log分析"><span class="toc-number">2.6.</span> <span class="toc-text">2.5 打印所有方法进行log分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Chisel-facebook开源插件"><span class="toc-number">3.</span> <span class="toc-text">三、Chisel-facebook开源插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-安装方法"><span class="toc-number">3.1.</span> <span class="toc-text">1. 安装方法:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-基本命令"><span class="toc-number">3.2.</span> <span class="toc-text">2. 基本命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-预览图片"><span class="toc-number">3.2.1.</span> <span class="toc-text">2.1. 预览图片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-边框-内容着色"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.2. 边框/内容着色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-关系链的继承"><span class="toc-number">3.2.3.</span> <span class="toc-text">2.3. 关系链的继承</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-打印所有属性"><span class="toc-number">3.2.4.</span> <span class="toc-text">2.4. 打印所有属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-bmessage"><span class="toc-number">3.2.5.</span> <span class="toc-text">2.5. bmessage</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-Crash-Callstack分析-进⼀一步分析"><span class="toc-number">4.</span> <span class="toc-text">三. Crash Callstack分析 - 进⼀一步分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">5.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+		
+		</div>
+		
+		<p>在<a href="https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/gdb_to_lldb_transition_guide/document/lldb-command-examples.html#//apple_ref/doc/uid/TP40012917-CH3-SW5" target="_blank" rel="external">苹果的官方文档</a>中列出了我们在调试中能用到的一些命令，我们在这重点讲一些常用的命令 </p>
+<h2 id="一、基本操作"><a href="#一、基本操作" class="headerlink" title="一、基本操作"></a>一、基本操作</h2><h3 id="1-1-视图层次"><a href="#1-1-视图层次" class="headerlink" title="1.1. 视图层次"></a>1.1. 视图层次</h3><p>打印视图层次    <code>po [self.contentView recursiveDescription]</code></p>
+<h3 id="1-2-改变某个取值"><a href="#1-2-改变某个取值" class="headerlink" title="1.2. 改变某个取值"></a>1.2. 改变某个取值</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="comment">//Console expr a=2</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"实际值: %d"</span>, a);</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-call改变view的背景色"><a href="#1-3-call改变view的背景色" class="headerlink" title="1.3. call改变view的背景色"></a>1.3. call改变view的背景色</h3><pre><code>call [self.view setBackgroundColor:[UIColor redColor]]
+</code></pre><h3 id="1-4-声明变量"><a href="#1-4-声明变量" class="headerlink" title="1.4. 声明变量"></a>1.4. 声明变量</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">expr <span class="keyword">int</span> $b=<span class="number">2</span> 或者 e <span class="keyword">int</span> $b=<span class="number">2</span></span><br><span class="line"><span class="comment">//输出  po $b</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-5-打印堆栈"><a href="#1-5-打印堆栈" class="headerlink" title="1.5. 打印堆栈"></a>1.5. 打印堆栈</h3><p>ios中打印堆栈方法是 <code>NSThread callStackSymbols</code>,这里调试的时候有个简单的方法如下  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bt  或者  bt all</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="1-6-更改方法返回值"><a href="#1-6-更改方法返回值" class="headerlink" title="1.6. 更改方法返回值"></a>1.6. 更改方法返回值</h3><p>thread return NO/YES  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-(<span class="built_in">BOOL</span>) returnYES</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//thread return NO ，可以更改函数返回值</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;<span class="comment">//方法返回结果为NO</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-7-多线程异常后查看历史对象的malloc分配历史"><a href="#1-7-多线程异常后查看历史对象的malloc分配历史" class="headerlink" title="1.7. 多线程异常后查看历史对象的malloc分配历史"></a>1.7. 多线程异常后查看历史对象的malloc分配历史</h3><p>先打开<strong>Enable Zombie Objects</strong> 和 <strong>Malloc Stack</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) command script import lldb.macosx.heap</span><br><span class="line">(lldb) malloc_info -S <span class="number">0x7ff7206c3a70</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-8-寄存器查找对象"><a href="#1-8-寄存器查找对象" class="headerlink" title="1.8. 寄存器查找对象"></a>1.8. 寄存器查找对象</h3><p>曾经遇到过一个问题，<code>[self.tableview reloadData]</code>直接奔溃。这时候tableview其实没有问题，我们要怎么去找问题呢？</p>
+<p><img src="/images/xcode/7.jpeg" alt="找到文件" title="找到日志文件"><br>如上图所示，最后我们通过<code>malloc_info -S 0x00007fe99a629560</code>来查看对象分配在堆里面的具体的地址，随后在左侧打开table的所有变量，输入这个地址即能够看到这个是什么成员。</p>
+<h3 id="常见问题－打印无效"><a href="#常见问题－打印无效" class="headerlink" title="常见问题－打印无效"></a>常见问题－打印无效</h3><p>上面我们简单的学习了如何使用LLDB命令。但有时我们在使用这些LLDB命令的时候，依然可能会遇到一些问题。不明类型或者类型不匹配  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p (<span class="keyword">void</span>)<span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[<span class="keyword">self</span>.view  viewWithTag:<span class="number">1001</span>])    <span class="comment">//记住要加void </span></span><br><span class="line">p (<span class="built_in">CGRect</span>)[<span class="keyword">self</span>.view frame]  <span class="comment">//记住不能写成 self.view.frame，lldb的bug</span></span><br></pre></td></tr></table></figure>
+<h2 id="二、调试进阶"><a href="#二、调试进阶" class="headerlink" title="二、调试进阶"></a>二、调试进阶</h2><h3 id="2-1-监听某个方法的调用"><a href="#2-1-监听某个方法的调用" class="headerlink" title="2.1. 监听某个方法的调用"></a>2.1. 监听某个方法的调用</h3><p><img src="/images/xcode/1.gif" alt="设置断点" title="设置断点"><br>如果是自定义的view，比如<code>QQView</code>，想监听frame变化，直接<code>[QQView setFrame:]</code>即可<br>系统方法就要如图所示，x86_64系统中，rdi表示第一个参数，具体其他平台可看<a href="https://www.clarkcox.com/blog/2009/02/04/inspecting-obj-c-parameters-in-gdb/" target="_blank" rel="external">inspecting-obj-c-parameters-in-gdb</a>，里面有详细的说明  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$rdi ➡ arg0 (<span class="keyword">self</span>)</span><br><span class="line">$rsi ➡ arg1 (_cmd)</span><br><span class="line">$rdx ➡ arg2</span><br><span class="line">$rcx ➡ arg3</span><br><span class="line">$r8 ➡ arg4</span><br><span class="line">$r9 ➡ arg5</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-image寻址-找到崩溃行"><a href="#2-2-image寻址-找到崩溃行" class="headerlink" title="2.2. image寻址,找到崩溃行"></a>2.2. image寻址,找到崩溃行</h3><p>此时会调用如下代码会崩溃  </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">NSArray *arr=[[NSArray alloc] initWithObjects:@"1",@"2", nil];</span><br><span class="line">NSLog(@"%@",arr[2]);</span><br><span class="line">    </span><br><span class="line">2015-06-30 14:47:59.280 QQLLDB[6656:138560] *** Terminating app due to uncaught exception 'NSRangeException', reason: '*** -[__NSArrayI objectAtIndex:]: index 2 beyond bounds [0 .. 1]'</span><br><span class="line">*** First throw call stack:</span><br><span class="line">(</span><br><span class="line">0   CoreFoundation                      0x000000010b2d8c65 __exceptionPreprocess + 165</span><br><span class="line">1   libobjc.A.dylib                     0x000000010af71bb7 objc_exception_throw + 45</span><br><span class="line">2   CoreFoundation                      0x000000010b1cf17e -[__NSArrayI objectAtIndex:] + 190</span><br><span class="line">3   QQLLDB                              0x000000010aa404f6 -[ViewController viewDidLoad] + 1030</span><br><span class="line">4   UIKit                               0x000000010ba75210 -[UIViewController loadViewIfRequired] + 738</span><br><span class="line">5   UIKit                               0x000000010ba7540e -[UIViewController view] + 27</span><br><span class="line">6   UIKit                               0x000000010b9902c9 -[UIWindow</span><br></pre></td></tr></table></figure>
+<p>此时我们要直接找到崩溃的行数，很简单。先找到非系统bug的崩溃地址，如下图所示，显然是第三行QQLLDB,右边对应的地址是<code>0x000000010aa404f6</code>,然后输入<code>image lookup --address 0x000000010aa404f6</code>,即可看到是60行出了bug   </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">image lookup --address <span class="number">0x000000010aa404f6</span>  </span><br><span class="line">Address: QQLLDB[<span class="number">0x00000001000014f6</span>] (QQLLDB.__TEXT.__text + <span class="number">1030</span>)  </span><br><span class="line">Summary: QQLLDB`-[ViewController viewDidLoad] + <span class="number">1030</span> at ViewController.m:<span class="number">60</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-crash日志分析，读取符号表"><a href="#2-3-crash日志分析，读取符号表" class="headerlink" title="2.3. crash日志分析，读取符号表"></a>2.3. crash日志分析，读取符号表</h3><p>1.要知道如何读取符号表，我们得先伪造一份符号表的数据文件出来，代码如下  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSArray</span> *arr=[[<span class="built_in">NSArray</span> alloc] initWithObjects:<span class="string">@"1"</span>,<span class="string">@"2"</span>, <span class="literal">nil</span>];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,arr[<span class="number">2</span>]);</span><br></pre></td></tr></table></figure>
+<p>伪造步骤：<br>1.编译到真机<br>2.然后进入xcode将这个打开，找到QQLLDB.app.dSYM这个文件，偷偷拷贝一份到桌面<br>3.然后在product中clean一下工程<br>4.在真机上打开一个编译进去的程序，会出现图 </p>
+<h3 id="步骤如下图所示："><a href="#步骤如下图所示：" class="headerlink" title="步骤如下图所示："></a>步骤如下图所示：</h3><p><img src="/images/xcode/2.gif" alt="xcode工程&quot;" title="xcode工程"><br><img src="/images/xcode/3.gif" alt="右键打开" title="右键打开"><br><img src="/images/xcode/4.gif" alt="包内容" title="包内容"><br><img src="/images/xcode/5.gif" alt="View Device Logs" title="View Device Logs"><br><img src="/images/xcode/6.gif" alt="找到文件" title="找到日志文件"><br> 之后在命令行操作  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">atos -o /Users/tomxiang/Desktop/符号表/QQLLDB.app.dSYM/Contents/Resources/DWARF/QQLLDB -l0x1000e8000 <span class="number">0x1000eebd4</span></span><br><span class="line"><span class="comment">//此时得到结果，告诉我们是ViewController的viewDidLoad的第62行崩溃</span></span><br><span class="line">-[ViewController viewDidLoad] (<span class="keyword">in</span> QQLLDB) (ViewController.m:<span class="number">62</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="2-4-观察实例变量的变化"><a href="#2-4-观察实例变量的变化" class="headerlink" title="2.4 观察实例变量的变化"></a>2.4 观察实例变量的变化</h3><p>假设你有一个 UIView，不知道为什么它的 _layer 实例变量被重写了 (糟糕)。因为有可能并不涉及到方法，我们不能使用符号断点。相反的，我们想监视什么时候这个地址被写入。</p>
+<p>首先，我们需要找到 _layer 这个变量在对象上的相对位置： </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p (ptrdiff_t)ivar_getOffset((<span class="keyword">struct</span> Ivar*)class_getInstanceVariable([MyView class], <span class="string">"_layer"</span>))</span><br><span class="line">(ptrdiff_t) $<span class="number">0</span> = <span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p>现在我们知道 ($myView + 8) 是被写入的内存地址：  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) watchpoint set expression -- (<span class="keyword">int</span> *)$myView + <span class="number">8</span></span><br><span class="line">Watchpoint created: Watchpoint <span class="number">3</span>: addr = <span class="number">0x7fa554231340</span> size = <span class="number">8</span> state = enabled type = w</span><br><span class="line">new value: <span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
+<p>这被以 wivar $myView _layer 加入到 Chisel 中。</p>
+<h3 id="2-5-打印所有方法进行log分析"><a href="#2-5-打印所有方法进行log分析" class="headerlink" title="2.5 打印所有方法进行log分析"></a>2.5 打印所有方法进行log分析</h3><p><img src="/images/xcode/8.jpeg" alt="打印log&quot;" title="打印log"> </p>
+<h2 id="三、Chisel-facebook开源插件"><a href="#三、Chisel-facebook开源插件" class="headerlink" title="三、Chisel-facebook开源插件"></a>三、Chisel-facebook开源插件</h2><h3 id="1-安装方法"><a href="#1-安装方法" class="headerlink" title="1. 安装方法:"></a>1. 安装方法:</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="comment">//github.com/facebook/chisel.git ~/.chisel</span></span><br><span class="line">echo <span class="string">"command script import ~/.chisel/fblldb.py"</span>&gt;&gt;~/.lldbinit</span><br><span class="line">安装好后，打开xcode就可以运行调试了</span><br></pre></td></tr></table></figure>
+<h3 id="2-基本命令"><a href="#2-基本命令" class="headerlink" title="2. 基本命令"></a>2. 基本命令</h3><h4 id="2-1-预览图片"><a href="#2-1-预览图片" class="headerlink" title="2.1. 预览图片"></a>2.1. 预览图片</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"clear"</span>];</span><br><span class="line"><span class="built_in">UIImageView</span> *imageView = [[<span class="built_in">UIImageView</span> alloc] initWithImage:image];</span><br><span class="line">[viewB addSubview:imageView];</span><br><span class="line"></span><br><span class="line"><span class="comment">//此时执行命令之后，图片会被苹果用自带的预览工具显示出来    </span></span><br><span class="line">visualize image</span><br></pre></td></tr></table></figure>
+<h4 id="2-2-边框-内容着色"><a href="#2-2-边框-内容着色" class="headerlink" title="2.2. 边框/内容着色"></a>2.2. 边框/内容着色</h4><p>如下所示，打印得到imageView地址之后，然后用<code>border</code>命令将其边框着色<code>unborder</code>取消着色  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) p imageView</span><br><span class="line">(<span class="built_in">UIImageView</span> *) $<span class="number">2</span> = <span class="number">0x00007fb8c9b15910</span></span><br><span class="line">(lldb) border <span class="number">0x00007fb8c9b15910</span> -c green -w <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>同理，<code>mask</code>是给内容着色    <code>unmask</code>  </p>
+<pre><code>mask imageView -c green
+</code></pre><h4 id="2-3-关系链的继承"><a href="#2-3-关系链的继承" class="headerlink" title="2.3. 关系链的继承"></a>2.3. 关系链的继承</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) pclass image</span><br><span class="line"><span class="built_in">UIImage</span></span><br><span class="line">	| <span class="built_in">NSObject</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-4-打印所有属性"><a href="#2-4-打印所有属性" class="headerlink" title="2.4. 打印所有属性"></a>2.4. 打印所有属性</h4><p><code>pinternals</code>这个命令就是打印出来的一个控件（id）类型的内部结构，详细到令人发指！甚至是你自定义的控件中的类型，譬如这个styleView就是我自定义的，内部有个iconView的属性，其中的值它也会打印出来。 </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">(lldb) pinternals image</span><br><span class="line">(<span class="built_in">UIImage</span>) $<span class="number">8</span> = &#123;  </span><br><span class="line">  	<span class="built_in">NSObject</span> = &#123;</span><br><span class="line">  	isa = <span class="built_in">UIImage</span>  </span><br><span class="line">&#125;</span><br><span class="line">_imageRef = <span class="number">0x00007fc1f3330780</span></span><br><span class="line">_scale = <span class="number">2</span></span><br><span class="line">_imageFlags = &#123;</span><br><span class="line">named = <span class="number">1</span></span><br><span class="line">imageOrientation = <span class="number">0</span></span><br><span class="line">cached = <span class="number">0</span></span><br><span class="line">hasPattern = <span class="number">0</span></span><br><span class="line">isCIImage = <span class="number">0</span></span><br><span class="line">renderingMode = <span class="number">0</span></span><br><span class="line">suppressesAccessibilityHairlineThickening = <span class="number">0</span></span><br><span class="line">hasDecompressionInfo = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-5-bmessage"><a href="#2-5-bmessage" class="headerlink" title="2.5. bmessage"></a>2.5. bmessage</h4><p>如果ChiselViewController没有设置<code>viewWillDisappear</code>这个方法，此时我想用断点断下来，可以这样  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(lldb) bmessage -[ChiselViewController viewWillDisappear:]</span><br><span class="line">	</span><br><span class="line">Setting a breakpoint at -[<span class="built_in">UIViewController</span> viewWillDisappear:] with condition (<span class="keyword">void</span>*)object_getClass((<span class="keyword">id</span>)$rdi) == <span class="number">0x0000000100c47060</span></span><br><span class="line">Breakpoint <span class="number">2</span>: where = <span class="built_in">UIKit</span>`-[<span class="built_in">UIViewController</span> viewWillDisappear:], address = <span class="number">0x0000000101a0b566</span></span><br></pre></td></tr></table></figure>
+<h2 id="三-Crash-Callstack分析-进⼀一步分析"><a href="#三-Crash-Callstack分析-进⼀一步分析" class="headerlink" title="三. Crash Callstack分析 - 进⼀一步分析"></a>三. Crash Callstack分析 - 进⼀一步分析</h2><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x8badf00d</td>
+<td>在启动、终⽌止应⽤用或响应系统事件花费过⻓长时间,意为“ate bad food”。</td>
+<td></td>
+</tr>
+<tr>
+<td>0xdeadfa11</td>
+<td>⽤用户强制退出,意为“dead fall”。(系统⽆无响应时,⽤用户按电源开关和HOME)</td>
+<td></td>
+</tr>
+<tr>
+<td>0xbaaaaaad</td>
+<td>⽤用户按住Home键和⾳音量键,获取当前内存状态,不代表崩溃</td>
+<td></td>
+</tr>
+<tr>
+<td>0xbad22222</td>
+<td>VoIP应⽤用因为恢复得太频繁导致crash</td>
+<td></td>
+</tr>
+<tr>
+<td>0xc00010ff</td>
+<td>因为太烫了被干掉,意为“cool off”</td>
+<td></td>
+</tr>
+<tr>
+<td>0xdead10cc</td>
+<td>因为在后台时仍然占据系统资源(⽐比如通讯录)被干掉,意为“dead lock”</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h2><p>1.<a href="http://blog.csdn.net/smking/article/details/8639860" target="_blank" rel="external">当异常出现时</a><br>2.<a href="https://github.com/CocoaLumberjack/CocoaLumberjack" target="_blank" rel="external">日志记录CocoaLumberjack</a><br>3.<a href="http://southpeak.github.io/blog/2015/01/25/gong-ju-pian-:lldbdiao-shi-qi/" target="_blank" rel="external">在Xcode中调试程序</a><br>4.<a href="http://southpeak.github.io/blog/2015/01/25/gong-ju-pian-:lldbdiao-shi-qi/" target="_blank" rel="external">南峰子的技术博客</a><br>5.<a href="http://objccn.io/issue-19-2/" target="_blank" rel="external">与调试器共舞 - LLDB 的华尔兹</a><br>6.<a href="https://developer.apple.com/library/mac/technotes/tn2124/_index.html" target="_blank" rel="external">官方调试技巧文档</a><br>7.<a href="https://www.clarkcox.com/blog/2009/02/04/inspecting-obj-c-parameters-in-gdb/" target="_blank" rel="external">inspecting-obj-c-parameters-in-gdb</a></p>
+<p>版权申明：我已将本文在微信公众平台的发表权「独家代理」给 iOS 开发（iOSDevTips）微信公共帐号。<br>扫码关注「iOS 开发」：<br><img src="http://blog.devtang.com/images/weixin-qr.jpg" alt="二维码"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2015-06-30-xcodediao-shi-(ru-men-pian)chang-yong-ming-ling.html" data-title="xcode调试效率 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015-07-26-mvvmshi-zhan-ying-yong-tableview.html" title="MVVM实战应用之TableView的代码优化">
+  <strong>上一篇：</strong><br/>
+  <span>
+  MVVM实战应用之TableView的代码优化</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015-06-02-jie-he-shi-jian-yuan-liao-jie-nsrunloop.html"  title="Runloop入门篇">
+ <strong>下一篇：</strong><br/> 
+ <span>Runloop入门篇
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基本操作"><span class="toc-number">1.</span> <span class="toc-text">一、基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-视图层次"><span class="toc-number">1.1.</span> <span class="toc-text">1.1. 视图层次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-改变某个取值"><span class="toc-number">1.2.</span> <span class="toc-text">1.2. 改变某个取值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-call改变view的背景色"><span class="toc-number">1.3.</span> <span class="toc-text">1.3. call改变view的背景色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-声明变量"><span class="toc-number">1.4.</span> <span class="toc-text">1.4. 声明变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-打印堆栈"><span class="toc-number">1.5.</span> <span class="toc-text">1.5. 打印堆栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-更改方法返回值"><span class="toc-number">1.6.</span> <span class="toc-text">1.6. 更改方法返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-多线程异常后查看历史对象的malloc分配历史"><span class="toc-number">1.7.</span> <span class="toc-text">1.7. 多线程异常后查看历史对象的malloc分配历史</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-寄存器查找对象"><span class="toc-number">1.8.</span> <span class="toc-text">1.8. 寄存器查找对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见问题－打印无效"><span class="toc-number">1.9.</span> <span class="toc-text">常见问题－打印无效</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、调试进阶"><span class="toc-number">2.</span> <span class="toc-text">二、调试进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-监听某个方法的调用"><span class="toc-number">2.1.</span> <span class="toc-text">2.1. 监听某个方法的调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-image寻址-找到崩溃行"><span class="toc-number">2.2.</span> <span class="toc-text">2.2. image寻址,找到崩溃行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-crash日志分析，读取符号表"><span class="toc-number">2.3.</span> <span class="toc-text">2.3. crash日志分析，读取符号表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#步骤如下图所示："><span class="toc-number">2.4.</span> <span class="toc-text">步骤如下图所示：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-观察实例变量的变化"><span class="toc-number">2.5.</span> <span class="toc-text">2.4 观察实例变量的变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-打印所有方法进行log分析"><span class="toc-number">2.6.</span> <span class="toc-text">2.5 打印所有方法进行log分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Chisel-facebook开源插件"><span class="toc-number">3.</span> <span class="toc-text">三、Chisel-facebook开源插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-安装方法"><span class="toc-number">3.1.</span> <span class="toc-text">1. 安装方法:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-基本命令"><span class="toc-number">3.2.</span> <span class="toc-text">2. 基本命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-预览图片"><span class="toc-number">3.2.1.</span> <span class="toc-text">2.1. 预览图片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-边框-内容着色"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.2. 边框/内容着色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-关系链的继承"><span class="toc-number">3.2.3.</span> <span class="toc-text">2.3. 关系链的继承</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-打印所有属性"><span class="toc-number">3.2.4.</span> <span class="toc-text">2.4. 打印所有属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-bmessage"><span class="toc-number">3.2.5.</span> <span class="toc-text">2.5. bmessage</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-Crash-Callstack分析-进⼀一步分析"><span class="toc-number">4.</span> <span class="toc-text">三. Crash Callstack分析 - 进⼀一步分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">5.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

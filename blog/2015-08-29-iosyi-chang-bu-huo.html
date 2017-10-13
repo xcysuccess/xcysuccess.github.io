@@ -1,0 +1,585 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iOS异常捕获 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="debug,异常">
+    <meta name="description" content="Crash分为两种，一种是由EXC_BAD_ACCESS引起的，原因是访问了不属于本进程的内存地址，有可能是访问已被释放的内存；另一种是未被捕获的Objective-C异常（NSException）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS异常捕获">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2015-08-29-iosyi-chang-bu-huo.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="Crash分为两种，一种是由EXC_BAD_ACCESS引起的，原因是访问了不属于本进程的内存地址，有可能是访问已被释放的内存；另一种是未被捕获的Objective-C异常（NSException）">
+<meta property="og:image" content="http://www.iosxxx.com/images/iosCrashException/1.png">
+<meta property="og:image" content="http://www.iosxxx.com/images/iosCrashException/2.png">
+<meta property="og:updated_time" content="2016-06-02T14:19:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS异常捕获">
+<meta name="twitter:description" content="Crash分为两种，一种是由EXC_BAD_ACCESS引起的，原因是访问了不属于本进程的内存地址，有可能是访问已被释放的内存；另一种是未被捕获的Objective-C异常（NSException）">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/iosCrashException/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015-08-29-iosyi-chang-bu-huo.html" title="iOS异常捕获" itemprop="url">iOS异常捕获</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-29T15:48:11.000Z" itemprop="datePublished"> 发表于 2015-08-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-系统Crash"><span class="toc-number">2.</span> <span class="toc-text">一. 系统Crash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-处理signal"><span class="toc-number">3.</span> <span class="toc-text">二. 处理signal</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下面是一些信号说明"><span class="toc-number">3.1.</span> <span class="toc-text">下面是一些信号说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键点注意"><span class="toc-number">3.2.</span> <span class="toc-text">关键点注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-实战"><span class="toc-number">4.</span> <span class="toc-text">三. 实战</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Crash-Callstack分析-进⼀一步分析"><span class="toc-number">5.</span> <span class="toc-text">四. Crash Callstack分析 - 进⼀一步分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-demo地址"><span class="toc-number">6.</span> <span class="toc-text">五. demo地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-参考文献"><span class="toc-number">7.</span> <span class="toc-text">六. 参考文献</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>今天在ios高级群<strong>237305299</strong>，有朋友问到iOS的异常捕捉的问题，这一块以前也没有研究过，趁此机会研究了一把。并写了一个demo，如有需要可以在文章最下面去下载。 </p>
+<p>在阅读文章之前，建议大家在阅读完此篇文章后可以阅读<a href="http://nianxi.net/ios/ios-crash-reporter/" target="_blank" rel="external">漫谈iOS Crash收集框架</a>，了解一下原理。  </p>
+<p>开发iOS应用，解决Crash问题始终是一个难题。Crash分为两种，一种是由EXC_BAD_ACCESS引起的，原因是访问了不属于本进程的内存地址，有可能是访问已被释放的内存；另一种是未被捕获的Objective-C异常（NSException），导致程序向自身发送了SIGABRT信号而崩溃。其实对于未捕获的Objective-C异常，我们是有办法将它记录下来的，如果日志记录得当，能够解决绝大部分崩溃的问题。这里对于UI线程与后台线程分别说明</p>
+<h2 id="一-系统Crash"><a href="#一-系统Crash" class="headerlink" title="一. 系统Crash"></a>一. 系统Crash</h2><p>对于系统Crash而引起的程序异常退出，可以通过UncaughtExceptionHandler机制捕获；也就是说在程序中catch以外的内容，被系统自带的错误处理而捕获。我们要做的就是用自定义的函数替代该ExceptionHandler即可。  </p>
+<h2 id="二-处理signal"><a href="#二-处理signal" class="headerlink" title="二. 处理signal"></a>二. 处理signal</h2><p>使用Objective-C的异常处理是不能得到signal的，如果要处理它，我们还要利用unix标准的signal机制，注册SIGABRT, SIGBUS, SIGSEGV等信号发生时的处理函数。该函数中我们可以输出栈信息，版本信息等其他一切我们所想要的。<br><a id="more"></a>  </p>
+<h3 id="下面是一些信号说明"><a href="#下面是一些信号说明" class="headerlink" title="下面是一些信号说明"></a>下面是一些信号说明</h3><p>1)  <strong>SIGHUP</strong><br>本信号在用户终端连接(正常或非正常)结束时发出,   通常是在终端的控制进程结束时,   通知同一session内的各个作业,   这时它们与控制终端不再关联。<br>登录Linux时，系统会分配给登录用户一个终端(Session)。在这个终端运行的所有程序，包括前台进程组和后台进程组，一般都属于这个     Session。当用户退出Linux登录时，前台进程组和后台有对终端输出的进程将会收到SIGHUP信号。这个信号的默认操作为终止进程，因此前台进   程组和后台有终端输出的进程就会中止。不过可以捕获这个信号，比如wget能捕获SIGHUP信号，并忽略它，这样就算退出了Linux登录，   wget也   能继续下载。<br>此外，对于与终端脱离关系的守护进程，这个信号用于通知它重新读取配置文件。<br>2)   <strong>SIGINT</strong><br>程序终止(interrupt)信号,   在用户键入INTR字符(通常是Ctrl-C)时发出，用于通知前台进程组终止进程。<br>3)   <strong>SIGQUIT</strong><br>和SIGINT类似,   但由QUIT字符(通常是Ctrl-)来控制.   进程在因收到SIGQUIT退出时会产生core文件,   在这个意义上类似于一个程序错误信号。<br>4)   <strong>SIGILL</strong><br>执行了非法指令.   通常是因为可执行文件本身出现错误,   或者试图执行数据段.   堆栈溢出时也有可能产生这个信号。<br>5)   <strong>SIGTRAP</strong><br>由断点指令或其它trap指令产生.   由debugger使用。<br>6)   <strong>SIGABRT</strong><br>调用abort函数生成的信号。<br>7)   <strong>SIGBUS</strong><br>非法地址,   包括内存地址对齐(alignment)出错。比如访问一个四个字长的整数,   但其地址不是4的倍数。它与SIGSEGV的区别在于后者是由于对合法存储地址的非法访问触发的(如访问不属于自己存储空间或只读存储空间)。<br>8)   <strong>SIGFPE</strong><br>在发生致命的算术运算错误时发出.   不仅包括浮点运算错误,   还包括溢出及除数为0等其它所有的算术的错误。<br>9)   <strong>SIGKILL</strong><br>用来立即结束程序的运行.   本信号不能被阻塞、处理和忽略。如果管理员发现某个进程终止不了，可尝试发送这个信号。<br>10)   <strong>SIGUSR1</strong><br>留给用户使用<br>11)   <strong>SIGSEGV</strong><br>试图访问未分配给自己的内存,   或试图往没有写权限的内存地址写数据.<br>12)   <strong>SIGUSR2</strong><br>留给用户使用<br>13)   <strong>SIGPIPE</strong><br>管道破裂。这个信号通常在进程间通信产生，比如采用FIFO(管道)通信的两个进程，读管道没打开或者意外终止就往管道写，写进程会收到SIGPIPE信号。此外用Socket通信的两个进程，写进程在写Socket的时候，读进程已经终止。<br>14)   <strong>SIGALRM</strong><br>时钟定时信号,   计算的是实际的时间或时钟时间.   alarm函数使用该信号.<br>15)   <strong>SIGTERM</strong><br>程序结束(terminate)信号,   与SIGKILL不同的是该信号可以被阻塞和处理。通常用来要求程序自己正常退出，shell命令kill缺省产生这个信号。如果进程终止不了，我们才会尝试SIGKILL。<br>17)   <strong>SIGCHLD</strong><br>子进程结束时,   父进程会收到这个信号。<br>如果父进程没有处理这个信号，也没有等待(wait)子进程，子进程虽然终止，但是还会在内核进程表中占有表项，这时的子进程称为僵尸进程。这种情     况我们应该避免(父进程或者忽略SIGCHILD信号，或者捕捉它，或者wait它派生的子进程，或者父进程先终止，这时子进程的终止自动由init进程   来接管)。<br>18)   <strong>SIGCONT</strong><br>让一个停止(stopped)的进程继续执行.   本信号不能被阻塞.   可以用一个handler来让程序在由stopped状态变为继续执行时完成特定的工作.   例如,   重新显示提示符<br>19)   <strong>SIGSTOP</strong><br>停止(stopped)进程的执行.   注意它和terminate以及interrupt的区别:该进程还未结束,   只是暂停执行.   本信号不能被阻塞,   处理或忽略.<br>20)   <strong>SIGTSTP</strong><br>停止进程的运行,   但该信号可以被处理和忽略.   用户键入SUSP字符时(通常是Ctrl-Z)发出这个信号<br>21)   <strong>SIGTTIN</strong><br>当后台作业要从用户终端读数据时,   该作业中的所有进程会收到SIGTTIN信号.   缺省时这些进程会停止执行.<br>22)   <strong>SIGTTOU</strong><br>类似于SIGTTIN,   但在写终端(或修改终端模式)时收到.<br>23)   <strong>SIGURG</strong><br>有”紧急”数据或out-of-band数据到达socket时产生.<br>24)   <strong>SIGXCPU</strong><br>超过CPU时间资源限制.   这个限制可以由getrlimit/setrlimit来读取/改变。<br>25)   <strong>SIGXFSZ</strong><br>当进程企图扩大文件以至于超过文件大小资源限制。<br>26)   <strong>SIGVTALRM</strong><br>虚拟时钟信号.   类似于SIGALRM,   但是计算的是该进程占用的CPU时间.<br>27)   <strong>SIGPROF</strong><br>类似于SIGALRM/SIGVTALRM,   但包括该进程用的CPU时间以及系统调用的时间.<br>28)   <strong>SIGWINCH</strong><br>窗口大小改变时发出.<br>29)   <strong>SIGIO</strong><br>文件描述符准备就绪,   可以开始进行输入/输出操作.<br>30)   <strong>SIGPWR</strong><br>Power   failure<br>31)   <strong>SIGSYS</strong><br>非法的系统调用。</p>
+<h3 id="关键点注意"><a href="#关键点注意" class="headerlink" title="关键点注意"></a>关键点注意</h3><ul>
+<li>在以上列出的信号中，程序不可捕获、阻塞或忽略的信号有：<strong>SIGKILL,SIGSTOP</strong></li>
+<li>不能恢复至默认动作的信号有：SIGILL,SIGTRAP  </li>
+<li>默认会导致进程流产的信号有：SIGABRT,SIGBUS,SIGFPE,SIGILL,SIGIOT,SIGQUIT,SIGSEGV,SIGTRAP,SIGXCPU,SIGXFSZ<br>默认会导致进程退出的信号有:  </li>
+<li>SIGALRM,SIGHUP,SIGINT,SIGKILL,SIGPIPE,SIGPOLL,SIGPROF,SIGSYS,SIGTERM,SIGUSR1,SIGUSR2,SIGVTALRM </li>
+<li>默认会导致进程停止的信号有：SIGSTOP,SIGTSTP,SIGTTIN,SIGTTOU </li>
+<li>默认进程忽略的信号有：SIGCHLD,SIGPWR,SIGURG,SIGWINCH</li>
+<li>此外，SIGIO在SVR4是退出，在4.3BSD中是忽略；SIGCONT在进程挂起时是继续，否则是忽略，不能被阻塞。</li>
+</ul>
+<h2 id="三-实战"><a href="#三-实战" class="headerlink" title="三. 实战"></a>三. 实战</h2><p>1.<code>AppDelegate.m</code>中  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)application:(<span class="built_in">UIApplication</span> *)application didFinishLaunchingWithOptions:(<span class="built_in">NSDictionary</span> *)launchOptions &#123;</span><br><span class="line"><span class="comment">// Override point for customization after application launch.</span></span><br><span class="line">    </span><br><span class="line">InstallSignalHandler();<span class="comment">//信号量截断</span></span><br><span class="line">	InstallUncaughtExceptionHandler();<span class="comment">//系统异常捕获</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.<code>SignalHandler.m</code>的实现  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> SignalExceptionHandler(<span class="keyword">int</span> signal)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSMutableString</span> *mstr = [[<span class="built_in">NSMutableString</span> alloc] init];</span><br><span class="line">    [mstr appendString:<span class="string">@"Stack:\n"</span>];</span><br><span class="line">    <span class="keyword">void</span>* callstack[<span class="number">128</span>];</span><br><span class="line">    <span class="keyword">int</span> i, frames = backtrace(callstack, <span class="number">128</span>);</span><br><span class="line">    <span class="keyword">char</span>** strs = backtrace_symbols(callstack, frames);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt;frames; ++i) &#123;</span><br><span class="line">        [mstr appendFormat:<span class="string">@"%s\n"</span>, strs[i]];</span><br><span class="line">    &#125;</span><br><span class="line">    [SignalHandler saveCreash:mstr];</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InstallSignalHandler(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">    signal(SIGHUP, SignalExceptionHandler);</span><br><span class="line">    signal(SIGINT, SignalExceptionHandler);</span><br><span class="line">    signal(SIGQUIT, SignalExceptionHandler);</span><br><span class="line">    </span><br><span class="line">    signal(SIGABRT, SignalExceptionHandler);</span><br><span class="line">    signal(SIGILL, SignalExceptionHandler);</span><br><span class="line">    signal(SIGSEGV, SignalExceptionHandler);</span><br><span class="line">    signal(SIGFPE, SignalExceptionHandler);</span><br><span class="line">    signal(SIGBUS, SignalExceptionHandler);</span><br><span class="line">    signal(SIGPIPE, SignalExceptionHandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有关错误类型可以看上面的说明，SignalExceptionHandler是信号出错时候的回调。当有信号出错的时候，可以回调到这个方法</p>
+<p>3.<code>UncaughtExceptionHandler.m</code>的实现  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> HandleException(<span class="built_in">NSException</span> *exception)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 异常的堆栈信息</span></span><br><span class="line">    <span class="built_in">NSArray</span> *stackArray = [exception callStackSymbols];</span><br><span class="line">    <span class="comment">// 出现异常的原因</span></span><br><span class="line">    <span class="built_in">NSString</span> *reason = [exception reason];</span><br><span class="line">    <span class="comment">// 异常名称</span></span><br><span class="line">    <span class="built_in">NSString</span> *name = [exception name];</span><br><span class="line">    <span class="built_in">NSString</span> *exceptionInfo = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"Exception reason：%@\nException name：%@\nException stack：%@"</span>,name, reason, stackArray];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, exceptionInfo);</span><br><span class="line">    [UncaughtExceptionHandler saveCreash:exceptionInfo];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InstallUncaughtExceptionHandler(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSSetUncaughtExceptionHandler</span>(&amp;HandleException);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.<strong>测试</strong>–踩坑关键<br><strong>这里最关键的一步，SignalHandler不要在debug环境下测试。因为系统的debug会优先去拦截。我们要运行一次后，关闭debug状态。应该直接在模拟器上点击我们build上去的app去运行。而UncaughtExceptionHandler可以在调试状态下捕捉</strong>   </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">IBAction</span>)buttonClick:(<span class="built_in">UIButton</span> *)sender &#123;</span><br><span class="line"><span class="comment">//1.信号量</span></span><br><span class="line">    Test *pTest = &#123;<span class="number">1</span>,<span class="number">2</span>&#125;;</span><br><span class="line">    free(pTest);<span class="comment">//导致SIGABRT的错误，因为内存中根本就没有这个空间，哪来的free，就在栈中的对象而已</span></span><br><span class="line">    pTest-&gt;a = <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">IBAction</span>)buttonOCException:(<span class="built_in">UIButton</span> *)sender</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//2.ios崩溃</span></span><br><span class="line">    <span class="built_in">NSArray</span> *array= @[<span class="string">@"tom"</span>,<span class="string">@"xxx"</span>,<span class="string">@"ooo"</span>];</span><br><span class="line">    [array objectAtIndex:<span class="number">5</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/iosCrashException/1.png" alt="&quot;文件结构&quot;"><br><img src="/images/iosCrashException/2.png" alt="&quot;操作&quot;">  </p>
+<h2 id="四-Crash-Callstack分析-进⼀一步分析"><a href="#四-Crash-Callstack分析-进⼀一步分析" class="headerlink" title="四. Crash Callstack分析 - 进⼀一步分析"></a>四. Crash Callstack分析 - 进⼀一步分析</h2><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x8badf00d</td>
+<td>在启动、终⽌止应⽤用或响应系统事件花费过⻓长时间,意为“ate bad food”。</td>
+<td></td>
+</tr>
+<tr>
+<td>0xdeadfa11</td>
+<td>⽤用户强制退出,意为“dead fall”。(系统⽆无响应时,⽤用户按电源开关和HOME)</td>
+<td></td>
+</tr>
+<tr>
+<td>0xbaaaaaad</td>
+<td>⽤用户按住Home键和⾳音量键,获取当前内存状态,不代表崩溃</td>
+<td></td>
+</tr>
+<tr>
+<td>0xbad22222</td>
+<td>VoIP应⽤用因为恢复得太频繁导致crash</td>
+<td></td>
+</tr>
+<tr>
+<td>0xc00010ff</td>
+<td>因为太烫了被干掉,意为“cool off”</td>
+<td></td>
+</tr>
+<tr>
+<td>0xdead10cc</td>
+<td>因为在后台时仍然占据系统资源(⽐比如通讯录)被干掉,意为“dead lock”</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="五-demo地址"><a href="#五-demo地址" class="headerlink" title="五. demo地址"></a>五. demo地址</h2><p><a href="https://github.com/xcysuccess/iOSCrashUncaught" target="_blank" rel="external">iOSCrashUncaught下载</a></p>
+<h2 id="六-参考文献"><a href="#六-参考文献" class="headerlink" title="六. 参考文献"></a>六. 参考文献</h2><p>1.<a href="http://www.yifeiyang.net/iphone-development-skills-of-debugging-articles-3-crash-after-debugging-skills-program/#sec7" target="_blank" rel="external">程序crash后的调试技巧</a><br>2.<a href="http://arthurchen.blog.51cto.com/2483760/736181" target="_blank" rel="external">iOS开发socket程序被SIGPIPE信号Terminate的问题</a><br>3.<a href="http://nianxi.net/ios/ios-crash-reporter/" target="_blank" rel="external">美女念茜</a><br>4.<a href="http://bugly.qq.com/blog/?p=200" target="_blank" rel="external">如何定位Obj-C野指针随机Crash(一)：先提高野指针Crash率</a><br>5.<a href="http://bugly.qq.com/blog/?p=308" target="_blank" rel="external">如何定位Obj-C野指针随机Crash(二)：让非必现Crash变成必现</a><br>6.<a href="http://bugly.qq.com/blog/?p=335" target="_blank" rel="external">如何定位Obj-C野指针随机Crash(三)：加点黑科技让Crash自报家门</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2015-08-29-iosyi-chang-bu-huo.html" data-title="iOS异常捕获 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015-09-24-ios9-dot-0de-xi-tong-bugdao-zhi-de-objc-msgsendcuo-wu-de-jie-jue-fang-an.html" title="ios9.0的系统bug导致的objc_msgSend错误的解决方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  ios9.0的系统bug导致的objc_msgSend错误的解决方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015-08-24-zi-ti-ru-men-pian.html"  title="字体入门篇">
+ <strong>下一篇：</strong><br/> 
+ <span>字体入门篇
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-系统Crash"><span class="toc-number">2.</span> <span class="toc-text">一. 系统Crash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-处理signal"><span class="toc-number">3.</span> <span class="toc-text">二. 处理signal</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下面是一些信号说明"><span class="toc-number">3.1.</span> <span class="toc-text">下面是一些信号说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键点注意"><span class="toc-number">3.2.</span> <span class="toc-text">关键点注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-实战"><span class="toc-number">4.</span> <span class="toc-text">三. 实战</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Crash-Callstack分析-进⼀一步分析"><span class="toc-number">5.</span> <span class="toc-text">四. Crash Callstack分析 - 进⼀一步分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-demo地址"><span class="toc-number">6.</span> <span class="toc-text">五. demo地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-参考文献"><span class="toc-number">7.</span> <span class="toc-text">六. 参考文献</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

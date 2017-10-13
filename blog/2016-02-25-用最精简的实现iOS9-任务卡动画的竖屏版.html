@@ -1,0 +1,554 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>用最精简的代码实现iOS9 任务卡动画的竖屏版 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="uicollectionview,ios9,task,任务卡,任务">
+    <meta name="description" content="用UICollectionView最大程度优化实现iOS9的任务卡动画">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用最精简的代码实现iOS9 任务卡动画的竖屏版">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2016-02-25-用最精简的实现iOS9-任务卡动画的竖屏版.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="用UICollectionView最大程度优化实现iOS9的任务卡动画">
+<meta property="og:image" content="http://www.iosxxx.com/images/animations/11.jpg">
+<meta property="og:image" content="http://www.iosxxx.com/images/animations/12.png">
+<meta property="og:updated_time" content="2016-06-02T14:21:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用最精简的代码实现iOS9 任务卡动画的竖屏版">
+<meta name="twitter:description" content="用UICollectionView最大程度优化实现iOS9的任务卡动画">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/animations/11.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016-02-25-用最精简的实现iOS9-任务卡动画的竖屏版.html" title="用最精简的代码实现iOS9 任务卡动画的竖屏版" itemprop="url">用最精简的代码实现iOS9 任务卡动画的竖屏版</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-25T12:03:02.000Z" itemprop="datePublished"> 发表于 2016-02-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-前言"><span class="toc-number">1.</span> <span class="toc-text">一. 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-组件的选择"><span class="toc-number">2.</span> <span class="toc-text">二. 组件的选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-思路"><span class="toc-number">3.</span> <span class="toc-text">三. 思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-布局"><span class="toc-number">3.1.</span> <span class="toc-text">1. 布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-原理"><span class="toc-number">3.2.</span> <span class="toc-text">2. 原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-滚动的时候3D变换"><span class="toc-number">3.3.</span> <span class="toc-text">3. 滚动的时候3D变换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-滚动完成自动对其到某个位置"><span class="toc-number">3.4.</span> <span class="toc-text">4. 滚动完成自动对其到某个位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-如何进行点击"><span class="toc-number">3.5.</span> <span class="toc-text">5. 如何进行点击</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Demo下载"><span class="toc-number">4.</span> <span class="toc-text">四. Demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">5.</span> <span class="toc-text">参考文档</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="一-前言"><a href="#一-前言" class="headerlink" title="一. 前言"></a>一. 前言</h2><p>想去年为了这个效果研究了整整一周，起始对<code>UICollectionView</code>并不熟悉，慢慢琢磨，遇到了各种困难，比如边界回弹，点击事件等，最后顺利完成，再此分享一下做这个动画的完整思路。  </p>
+<p><img src="/images/animations/11.jpg" alt="&quot;UICollectionView原理&quot;"></p>
+<h2 id="二-组件的选择"><a href="#二-组件的选择" class="headerlink" title="二. 组件的选择"></a>二. 组件的选择</h2><p>1.要实现一个类似iOS9的任务卡的卡牌的竖排版，你会如何选择组件？  </p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UIScrollView</td>
+<td>可以自由控制动画，以及滚动速率等</td>
+<td>1.要自己实现View的复用，否则会占用内存 2.代码量太大，占安装包大小，后人很难维护</td>
+</tr>
+<tr>
+<td>UICollectionView</td>
+<td>对UIScrollview的封装，无法像UIScrollView那样自由控制底层参数</td>
+<td>便于维护，不用自己写复用View，代码量小</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三-思路"><a href="#三-思路" class="headerlink" title="三. 思路"></a>三. 思路</h2><h3 id="1-布局"><a href="#1-布局" class="headerlink" title="1. 布局"></a>1. 布局</h3><p>首先我们需要一个UICollectionView,collectionView里每一页都是一张card，一屏5张card.<br>因为UICollectionView是和UITableView类似，这时候如何让其有不同间距的排下来呢？这里我用了一个取巧的办法。<br>如何所示:<br><img src="/images/animations/12.png" alt="&quot;UICollectionView原理&quot;">  </p>
+<h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h3><p>其次，我们需要在UICollectionViewFlowLayout中每次滚动的时候判断每张card距离中心的距离，根据这个值来调整它的alpha，scale以及x轴的translation。  </p>
+<p>alpha：右边的card alpha都是1，左边的越靠左alpha越小<br>scale： 从左往右依次变大<br>translation：除了中间的card，所有的card都会右偏，而为了让中间card大部分都露出来，右边的card偏移需要比左边大</p>
+<h3 id="3-滚动的时候3D变换"><a href="#3-滚动的时候3D变换" class="headerlink" title="3. 滚动的时候3D变换"></a>3. 滚动的时候3D变换</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">-(<span class="built_in">NSArray</span>*)layoutAttributesForElementsInRect:(<span class="built_in">CGRect</span>)rect</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span>.arrayVisibleAttributes removeAllObjects];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSMutableArray</span>* attributes = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">NSInteger</span> i = <span class="number">0</span> ; i &lt; <span class="keyword">self</span>.cellCount; i++) &#123;</span><br><span class="line">        <span class="built_in">NSIndexPath</span>* indexPath = [<span class="built_in">NSIndexPath</span> indexPathForItem:i inSection:<span class="number">0</span>];</span><br><span class="line">        [attributes addObject:[<span class="keyword">self</span> layoutAttributesForItemAtIndexPath:indexPath]];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> attributes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="built_in">UICollectionViewLayoutAttributes</span> *)layoutAttributesForItemAtIndexPath:(<span class="built_in">NSIndexPath</span> *)path</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGRect</span> visibleRect;</span><br><span class="line">    visibleRect.origin = <span class="keyword">self</span>.collectionView.contentOffset;</span><br><span class="line">    visibleRect.size = <span class="keyword">self</span>.collectionView.bounds.size;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UICollectionViewLayoutAttributes</span>* attributes = [[<span class="keyword">super</span> layoutAttributesForItemAtIndexPath:path] <span class="keyword">copy</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//可视区域上面一个也需要，防止突然出现的效果，因为CATransform3DMakeTranslation会产生3d效果，故而应用CGRectIntersectsRect</span></span><br><span class="line">    <span class="built_in">CGRect</span> visibleRectAddLast = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, visibleRect.origin.y - ITEM_SIZE_HEIGHT, <span class="keyword">self</span>.collectionView.frame.size.width, visibleRect.size.height + ITEM_SIZE_HEIGHT);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">CGRectIntersectsRect</span>(visibleRectAddLast,attributes.frame))&#123;</span><br><span class="line">        attributes.alpha = <span class="number">1.</span>f;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// scale</span></span><br><span class="line">        <span class="built_in">CGFloat</span> progress = [<span class="keyword">self</span> getYCoordinate:attributes];</span><br><span class="line">        <span class="built_in">CGFloat</span> scaleWidth = <span class="number">1</span> + (progress) * <span class="number">0.06</span>;</span><br><span class="line">        <span class="built_in">CGFloat</span> scaleHeight = <span class="number">1</span> + (progress) * <span class="number">0.06</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// translation</span></span><br><span class="line">        <span class="built_in">CGFloat</span> translation = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (progress &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            translation = fabs(progress) * (<span class="keyword">self</span>.collectionView.frame.size.height * <span class="number">0.12</span>);<span class="comment">//SCREEN_HEIGHT/ 8.f;</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            translation = fabs(progress) * fabs(progress) * (<span class="keyword">self</span>.collectionView.frame.size.height * <span class="number">0.04803</span>);<span class="comment">//SCREEN_HEIGHT/ 22.5f;</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">CATransform3D</span> tranScale = <span class="built_in">CATransform3DMakeScale</span>(scaleWidth, scaleHeight, <span class="number">0.0</span>);</span><br><span class="line">        <span class="built_in">CATransform3D</span> tranTrans = <span class="built_in">CATransform3DMakeTranslation</span>(<span class="number">0</span>, translation-ITEM_SIZE_HEIGHT/<span class="number">5.8</span>, <span class="number">0.0</span>);<span class="comment">//向上平移</span></span><br><span class="line">        <span class="built_in">CATransform3D</span> transResult = <span class="built_in">CATransform3DConcat</span>(tranScale, tranTrans);</span><br><span class="line">        </span><br><span class="line">        attributes.zIndex = path.row;</span><br><span class="line">        attributes.transform3D = transResult;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(path.row == <span class="number">0</span> || path.row == <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            attributes.alpha = <span class="number">0.</span>f;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        [<span class="keyword">self</span>.arrayVisibleAttributes addObject:attributes];</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        attributes.alpha = <span class="number">0.</span>f;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//    [self setBounce:attributes];</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> attributes;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-滚动完成自动对其到某个位置"><a href="#4-滚动完成自动对其到某个位置" class="headerlink" title="4. 滚动完成自动对其到某个位置"></a>4. 滚动完成自动对其到某个位置</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">CGPoint</span>)targetContentOffsetForProposedContentOffset:(<span class="built_in">CGPoint</span>)proposedContentOffset withScrollingVelocity:(<span class="built_in">CGPoint</span>)velocity</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//  proposedContentOffset是没有对齐到网格时停下来的位置</span></span><br><span class="line">    <span class="built_in">CGFloat</span> offsetAdjustment = MAXFLOAT;</span><br><span class="line">    <span class="built_in">CGFloat</span> verticalCenter = proposedContentOffset.y + (ITEM_SIZE_HEIGHT / <span class="number">2.0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//  当前显示的区域</span></span><br><span class="line">    <span class="built_in">CGRect</span> targetRect = <span class="built_in">CGRectMake</span>(<span class="number">0.0</span>, proposedContentOffset.y, <span class="keyword">self</span>.collectionView.bounds.size.width, <span class="keyword">self</span>.collectionView.bounds.size.height);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//取当前显示的item</span></span><br><span class="line">    <span class="built_in">NSArray</span>* array = [<span class="keyword">super</span> layoutAttributesForElementsInRect:targetRect];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//对当前屏幕中的UICollectionViewLayoutAttributes逐个与屏幕中心进行比较，找出最接近中心的一个</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">UICollectionViewLayoutAttributes</span>* layoutAttributes <span class="keyword">in</span> array) &#123;</span><br><span class="line">        <span class="built_in">CGFloat</span> itemVerticalCenter = layoutAttributes.center.y;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (ABS(itemVerticalCenter - verticalCenter) &lt; ABS(offsetAdjustment)) &#123;</span><br><span class="line">            offsetAdjustment = itemVerticalCenter - verticalCenter;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">NSInteger</span> currentIndex = (<span class="built_in">NSInteger</span>)(labs((<span class="built_in">NSInteger</span>)layoutAttributes.indexPath.row - (<span class="built_in">NSInteger</span>)<span class="keyword">self</span>.cellCount - (<span class="built_in">NSInteger</span>)PAGECOUNT + <span class="number">1</span>));</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(currentIndex &lt;= PAGECOUNT &amp;&amp; velocity.y &gt;= <span class="number">0.</span>f)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">CGPointMake</span>(proposedContentOffset.x,proposedContentOffset.y);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">CGPointMake</span>(proposedContentOffset.x, proposedContentOffset.y + offsetAdjustment-ITEM_SIZE_HEIGHT/<span class="number">1.8</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-如何进行点击"><a href="#5-如何进行点击" class="headerlink" title="5. 如何进行点击"></a>5. 如何进行点击</h3><p>因为我们现在的原理不同，点击会出现偏移。故我们需要这么做。判断一下当前变换后的矩阵区域是否包含我们手点击的这个点即可。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)event:(<span class="built_in">UITapGestureRecognizer</span> *)gesture</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGPoint</span> point = [gesture locationInView:<span class="keyword">self</span>.collectionView];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSArray</span> *arrayVisible = <span class="keyword">self</span>.flowLayout.arrayVisibleAttributes;</span><br><span class="line">    <span class="keyword">for</span>(<span class="built_in">NSInteger</span> i = arrayVisible.count<span class="number">-2</span>; i &gt;= <span class="number">0</span> ; i-- )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(i &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">UICollectionViewLayoutAttributes</span>* attributesCurrent = [arrayVisible objectAtIndex:i];</span><br><span class="line">        <span class="built_in">UICollectionViewLayoutAttributes</span>* attributesNext = [arrayVisible objectAtIndex:(i+<span class="number">1</span>)];</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(attributesNext != <span class="literal">nil</span>)&#123;</span><br><span class="line">            <span class="built_in">CGRect</span> regsionImageView = <span class="built_in">CGRectMake</span>(attributesCurrent.frame.origin.x, attributesCurrent.frame.origin.y, attributesCurrent.frame.size.width, attributesNext.frame.origin.y - attributesCurrent.frame.origin.y);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">CGRectContainsPoint</span>(regsionImageView, point))&#123;</span><br><span class="line">                <span class="keyword">if</span>(attributesCurrent.alpha == <span class="number">1.</span>f)&#123;</span><br><span class="line">                    </span><br><span class="line">                    <span class="built_in">NSLog</span>(<span class="string">@"%ld"</span>,(<span class="keyword">long</span>)attributesCurrent.indexPath.row);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="四-Demo下载"><a href="#四-Demo下载" class="headerlink" title="四. Demo下载"></a>四. Demo下载</h2><p><a href="http://share.weiyun.com/188cca3aac35cbc23b7b7c0e2d1f237a" target="_blank" rel="external">Demo下载</a></p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
+<li><a href="http://tech.glowing.com/cn/implement-ios9-task-switcher-animation/" target="_blank" rel="external">实现iOS 9 Task Switcher动画</a>  </li>
+<li><a href="http://www.jianshu.com/p/16c9d466f88c" target="_blank" rel="external">纯代码创建UICollectionView步骤以及简单使用</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2016-02-25-用最精简的实现iOS9-任务卡动画的竖屏版.html" data-title="用最精简的代码实现iOS9 任务卡动画的竖屏版 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016-06-02-GCD那些事.html" title="GCD那些事">
+  <strong>上一篇：</strong><br/>
+  <span>
+  GCD那些事</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016-01-31-blockcong-ru-men-dao-jing-tong.html"  title="Block那些事">
+ <strong>下一篇：</strong><br/> 
+ <span>Block那些事
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-前言"><span class="toc-number">1.</span> <span class="toc-text">一. 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-组件的选择"><span class="toc-number">2.</span> <span class="toc-text">二. 组件的选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-思路"><span class="toc-number">3.</span> <span class="toc-text">三. 思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-布局"><span class="toc-number">3.1.</span> <span class="toc-text">1. 布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-原理"><span class="toc-number">3.2.</span> <span class="toc-text">2. 原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-滚动的时候3D变换"><span class="toc-number">3.3.</span> <span class="toc-text">3. 滚动的时候3D变换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-滚动完成自动对其到某个位置"><span class="toc-number">3.4.</span> <span class="toc-text">4. 滚动完成自动对其到某个位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-如何进行点击"><span class="toc-number">3.5.</span> <span class="toc-text">5. 如何进行点击</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Demo下载"><span class="toc-number">4.</span> <span class="toc-text">四. Demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">5.</span> <span class="toc-text">参考文档</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

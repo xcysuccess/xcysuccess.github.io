@@ -1,0 +1,659 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>FFmpeg3的iOS版的入门格式转换器(无编码) | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="FFmpeg,FFmpeg3,封装格式转换">
+    <meta name="description" content="描述FFMPEG的一些常用类,以及常用方法的一些简单介绍,用一个实例去做类型转换,只做了解封装然后用码流重新封装成新格式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg3的iOS版的入门格式转换器(无编码)">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2017-07-29-FFmpeg3的iOS版的入门格式转换器(无编码).html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="描述FFMPEG的一些常用类,以及常用方法的一些简单介绍,用一个实例去做类型转换,只做了解封装然后用码流重新封装成新格式">
+<meta property="og:image" content="http://www.iosxxx.com/../images/mov2flv/1.png">
+<meta property="og:image" content="http://www.iosxxx.com/../images/mov2flv/2.png">
+<meta property="og:image" content="http://www.iosxxx.com/../images/mov2flv/3.png">
+<meta property="og:updated_time" content="2017-08-07T11:31:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FFmpeg3的iOS版的入门格式转换器(无编码)">
+<meta name="twitter:description" content="描述FFMPEG的一些常用类,以及常用方法的一些简单介绍,用一个实例去做类型转换,只做了解封装然后用码流重新封装成新格式">
+<meta name="twitter:image" content="http://www.iosxxx.com/../images/mov2flv/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2017-07-29-FFmpeg3的iOS版的入门格式转换器(无编码).html" title="FFmpeg3的iOS版的入门格式转换器(无编码)" itemprop="url">FFmpeg3的iOS版的入门格式转换器(无编码)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2017-07-29T08:14:58.000Z" itemprop="datePublished"> 发表于 2017-07-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-概念入门"><span class="toc-number">2.</span> <span class="toc-text">一. 概念入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-几个常用类的介绍"><span class="toc-number">3.</span> <span class="toc-text">二. 几个常用类的介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-流程介绍"><span class="toc-number">4.</span> <span class="toc-text">三. 流程介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考目录"><span class="toc-number">5.</span> <span class="toc-text">参考目录</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>天妒英才，不夸张的说，如果不知道雷霄骅，可能你音视频还没入门.借用新浪网友 @张新成010 的话。“你的博客纯粹是为了分享，写的很仔细，引领了多少人入门，在音视频方面有自己的见解，在当今音视频编解码封闭技术领域，你摒弃了别人的躲躲藏藏，无私奉献，你是伟大的，很多音视频方向的朋友称你为雷神，你无愧于这个称号！一个在大学里能静下心来做研究，又能无私分享的，尤其是在中国的大学里，你是难能可贵的佼佼者，至此以后，博客上不会再有更新，音视频的世界少了一颗将才。我已无语，痛心而疾，雷霄骅，雷神，感谢有你，天堂安好！”<br>本文参考了雷神的<a href="http://blog.csdn.net/leixiaohua1020/article/details/18893769" target="_blank" rel="external">[总结]视音频编解码技术零基础学习方法</a>以及<a href="http://blog.csdn.net/leixiaohua1020/article/details/25422685" target="_blank" rel="external"> 最简单的基于FFMPEG的封装格式转换器（无编解码）</a>。<br>之所以想重新再写一下是因为现在FFmpeg已经出了是3.3，改动了蛮多,之前的代码继续跑会有点问题了。也是对自己学习的一个总结吧,记得刚学习的时候真的啥都不懂(现在也是略懂).看着雷神的文章慢慢入门的,获益匪浅。<br>看这边文章之前建议先看一下之前写的 <a href="http://www.iosxxx.com/blog/2017-07-17-iOS%E7%BC%96%E8%A7%A3%E7%A0%81%E5%85%A5%E9%97%A8%E7%AF%87-FFMPEG%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.html">iOS编解码入门篇(FFMPEG环境搭建)</a></p>
+<h2 id="一-概念入门"><a href="#一-概念入门" class="headerlink" title="一. 概念入门"></a>一. 概念入门</h2><p>我们经常下载的视频文件有mov,mp4,flv,音频文件有mp3等。大家知道这些到底是什么吗？   </p>
+<p><img src="../images/mov2flv/1.png" alt="">  </p>
+<p>如图所示，这是一个从网上下载的视频文件到播放的一个流程图。简单理解，从协议层下来之后我们下载了一个视频文件，视频大家都知道,有声音和画面两部分组成。那么原始视频数据有YUV,RGB等等，音频有PCM等。如果我们不经过压缩,直接将数据封装成文件那么带宽服务器应该早就瘫痪了。这里就需要一套压缩视频和音频的技术。目前比较通用的视频压缩一般是<strong>H.264与H.265</strong>，音频压缩技术一般是用<strong>AAC</strong>.这样大家应该就理解了上图所示的<strong>编解码层与像素层</strong>.封装格式层像<strong>flv,mp4,avi</strong>等等。只是基于编解码层基础上封装了一些自己的格式。   </p>
+<p>MP4/RMVB/MKV/AVI这些属于封装格式。作用就是把视频和音频放到一块，相当于“容器”。其中可以放压缩编码的视频和音频。<br>mpeg4，H.264.H.265这些属于视频编码格式，是压缩编码视频的。<br>AAC，mp3些属于音频编码格式，是压缩编码音频的。   </p>
+<p>如果对几个视频文件的区别感兴趣可以看这篇文章<a href="https://zhidao.baidu.com/question/371893045.html" target="_blank" rel="external">mkv、rmvb、avi、MP4、flv、wmv特点和区别</a>.   </p>
+<h2 id="二-几个常用类的介绍"><a href="#二-几个常用类的介绍" class="headerlink" title="二. 几个常用类的介绍"></a>二. 几个常用类的介绍</h2><table>
+<thead>
+<tr>
+<th style="text-align:left">常用类</th>
+<th style="text-align:center">意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">AVFormatContext</td>
+<td style="text-align:center">数据文件操作者,用于存储音视频封装格式中包含的信息。解封装格式的结构体</td>
+</tr>
+<tr>
+<td style="text-align:left">AVOutputFormat</td>
+<td style="text-align:center">输出的格式,包括音频封装格式,视频封装格式,字幕封装格式,所有封装格式都在AVCodecID这个枚举类型上面</td>
+</tr>
+<tr>
+<td style="text-align:left">AVStream</td>
+<td style="text-align:center">一个装载着视频/音频流信息的结构体,包括音视频流的长度,元数据信息，其中index属性用于表示视频/音频流</td>
+</tr>
+<tr>
+<td style="text-align:left">AVCodecContext</td>
+<td style="text-align:center">视频的基本参数,例如宽高等，存入音频的基本参数，声道，采样率等</td>
+</tr>
+<tr>
+<td style="text-align:left">AVCodec</td>
+<td style="text-align:center">编码器,设置编码类型，像素格式，视频宽高,fps(每秒帧数),用于编解码音视频编码层使用</td>
+</tr>
+<tr>
+<td style="text-align:left">AVFrame</td>
+<td style="text-align:center">原始数据,视频:YUV,RGB。音频:PCM. 宏块类型表，QP表，运动矢量表等数据</td>
+</tr>
+<tr>
+<td style="text-align:left">AVPacket</td>
+<td style="text-align:center">创建编码后的数据AVPacket来存储AVFrame编码后生成的数据</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">常用方法</th>
+<th style="text-align:center">意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">av_register_all</td>
+<td style="text-align:center">注册FFmpeg所有编解码器</td>
+</tr>
+<tr>
+<td style="text-align:left">avformat_open_input</td>
+<td style="text-align:center">FFMPEG打开媒体的的过程开始</td>
+</tr>
+<tr>
+<td style="text-align:left">avformat_find_stream_info</td>
+<td style="text-align:center">可以读取一部分视音频数据并且获得一些相关的信息</td>
+</tr>
+<tr>
+<td style="text-align:left">av_dump_format</td>
+<td style="text-align:center">打印: 输入格式的详细数据,例如时间,比特率,数据流,容器,元数据,辅助数据,编码,时间戳等</td>
+</tr>
+<tr>
+<td style="text-align:left">avformat_alloc_output_context2</td>
+<td style="text-align:center">初始化一个用于输出的AVFormatContext结构体</td>
+</tr>
+<tr>
+<td style="text-align:left">avcodec_find_encoder</td>
+<td style="text-align:center">用于查找FFmpeg的编码器</td>
+</tr>
+<tr>
+<td style="text-align:left">avcodec_find_decoder</td>
+<td style="text-align:center">用于查找FFmpeg的解码器</td>
+</tr>
+<tr>
+<td style="text-align:left">avformat_new_stream</td>
+<td style="text-align:center">在AVFormatContext中创建Stream通道</td>
+</tr>
+<tr>
+<td style="text-align:left">avcodec_alloc_context3</td>
+<td style="text-align:center">用AVCodec初始化AVCodecContext</td>
+</tr>
+<tr>
+<td style="text-align:left">avcodec_parameters_to_context</td>
+<td style="text-align:center">使用AVCodecParameters来填充AVCodecContext</td>
+</tr>
+<tr>
+<td style="text-align:left">avformat_write_header</td>
+<td style="text-align:center">Allocate the stream private data and write the stream header to an output media file</td>
+</tr>
+<tr>
+<td style="text-align:left">av_read_frame</td>
+<td style="text-align:center">从输入文件中读取一个AVPacket</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三-流程介绍"><a href="#三-流程介绍" class="headerlink" title="三. 流程介绍"></a>三. 流程介绍</h2><p><img src="../images/mov2flv/2.png" alt="">   </p>
+<p>如图所示,本文描述的是一个无编解码过程的直接读取flv中的数据将其转换成mov的过程。</p>
+<p><img src="../images/mov2flv/3.png" alt="">   </p>
+<p>代码如下:   </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXFFmpegRemuxer</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">AVFormatContext</span> *pInFormatContext;  <span class="comment">//数据文件操作者,用于存储音视频封装格式中包含的信息。解封装格式的结构体</span></span><br><span class="line">    <span class="built_in">AVFormatContext</span> *pOutFormatContext;</span><br><span class="line">    <span class="built_in">AVOutputFormat</span> *outputFormat;       <span class="comment">//输出的格式,包括音频封装格式,视频封装格式,字幕封装格式,所有封装格式都在AVCodecID这个枚举类型上面</span></span><br><span class="line">    <span class="built_in">AVPacket</span> pPacket;                   <span class="comment">//创建编码后的数据AVPacket来存储AVFrame编码后生成的数据</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *in_filename;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *out_filename;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXFFmpegRemuxer</span></span></span><br><span class="line"></span><br><span class="line">-(instancetype)init&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">self</span> = [<span class="keyword">super</span> init])&#123;</span><br><span class="line">        <span class="keyword">if</span> (![<span class="keyword">self</span> setEncode]) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)setEncode</span><br><span class="line">&#123;</span><br><span class="line">    avcodec_register_all();</span><br><span class="line">    <span class="built_in">AVCodec</span> *H264Codec = avcodec_find_encoder(<span class="built_in">AV_CODEC_ID_H264</span>);</span><br><span class="line">    <span class="keyword">if</span> (H264Codec == <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"编解码器不支持"</span>);</span><br><span class="line">        <span class="keyword">return</span>  <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">AVCodecContext</span> *codecContext = avcodec_alloc_context3(H264Codec);</span><br><span class="line">    <span class="keyword">if</span> (codecContext == <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"初始化编解码环境失败"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    codecContext -&gt; width = <span class="number">640</span>;</span><br><span class="line">    codecContext -&gt; height = <span class="number">480</span>;</span><br><span class="line">    codecContext-&gt;pix_fmt = <span class="built_in">AV_PIX_FMT_YUV420P</span>;</span><br><span class="line">    codecContext-&gt;time_base.den = <span class="number">25</span>;</span><br><span class="line">    codecContext-&gt;time_base.num = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(avcodec_open2(codecContext, H264Codec, <span class="literal">NULL</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"打开编码器失败"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>)initBasicInfo:(<span class="built_in">NSString</span>*) filePath&#123;</span><br><span class="line">    in_filename = [filePath cStringUsingEncoding:<span class="built_in">NSUTF8StringEncoding</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *outFileNameStr = [<span class="built_in">NSTemporaryDirectory</span>() stringByAppendingPathComponent:<span class="string">@"mov2flv.flv"</span>];</span><br><span class="line">    out_filename = [outFileNameStr cStringUsingEncoding:<span class="built_in">NSUTF8StringEncoding</span>];</span><br><span class="line">    <span class="keyword">if</span>([[<span class="built_in">NSFileManager</span> defaultManager] fileExistsAtPath:outFileNameStr])&#123;</span><br><span class="line">        [[<span class="built_in">NSFileManager</span> defaultManager] removeItemAtPath:outFileNameStr error:<span class="literal">nil</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>) movToFlv:(<span class="built_in">NSString</span>*) filePath&#123;</span><br><span class="line">    [<span class="keyword">self</span> initBasicInfo:filePath];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//1.注册FFmpeg所有编解码器。</span></span><br><span class="line">    av_register_all();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//2.avformat_open_input</span></span><br><span class="line">    <span class="keyword">if</span>((ret = avformat_open_input(&amp;pInFormatContext, in_filename, <span class="number">0</span>, <span class="number">0</span>))&lt;<span class="number">0</span>)&#123;</span><br><span class="line">        printf(<span class="string">"Could not open input file!"</span>);</span><br><span class="line">        [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//2.2.avformat_find_stream_info</span></span><br><span class="line">    <span class="keyword">if</span>((ret = avformat_find_stream_info(pInFormatContext, <span class="number">0</span>))&lt;<span class="number">0</span>)&#123; <span class="comment">//获取媒体信息</span></span><br><span class="line">        printf(<span class="string">"Failed to retrieve input stream information!"</span>);</span><br><span class="line">        [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    av_dump_format(pInFormatContext, <span class="number">0</span>, in_filename, <span class="number">0</span>);       <span class="comment">//打印: 输入格式的详细数据,例如时间,比特率,数据流,容器,元数据,辅助数据,编码,时间戳等</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//3.初始化输出码流的AVFormatContext。</span></span><br><span class="line">    avformat_alloc_output_context2(&amp;pOutFormatContext, <span class="literal">NULL</span>, <span class="literal">NULL</span>, out_filename);</span><br><span class="line">    <span class="keyword">if</span> (!pOutFormatContext) &#123;</span><br><span class="line">        printf(<span class="string">"Failed avformat_alloc_output_context2"</span>);</span><br><span class="line">        [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    outputFormat = pOutFormatContext-&gt;oformat;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//4.遍历inputFormatContext的stream，复制到pCodeContext中</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span> ; i&lt; pInFormatContext-&gt;nb_streams; ++i) &#123;</span><br><span class="line">        <span class="built_in">AVStream</span> *in_stream = pInFormatContext-&gt;streams[i];</span><br><span class="line">        <span class="comment">//4.1.avcodec_find_encoder查找编码器</span></span><br><span class="line">        <span class="built_in">AVCodec</span> *codec = avcodec_find_decoder(in_stream-&gt;codecpar-&gt;codec_id);</span><br><span class="line">        <span class="comment">//4.2.avformat_new_stream,创建输出码流的AVStream。</span></span><br><span class="line">        <span class="built_in">AVStream</span> *out_stream = avformat_new_stream(pOutFormatContext, codec);</span><br><span class="line">        <span class="keyword">if</span> (!out_stream) &#123;</span><br><span class="line">            printf(<span class="string">"Failed allocating output stream\n"</span>);</span><br><span class="line">            [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//4.3.为输出文件设置编码所需要的参数和格式,一个AVStream对应一个AVCodecContext</span></span><br><span class="line">        <span class="built_in">AVCodecContext</span> *pOutCodeContext = avcodec_alloc_context3(codec);</span><br><span class="line">        ret = avcodec_parameters_to_context(pOutCodeContext, in_stream-&gt;codecpar);</span><br><span class="line">        <span class="comment">//        ret = avcodec_parameters_from_context(in_stream-&gt;codecpar, pCodeContext);//将AVCodecContext的成员复制到AVCodecParameters结构体。前后两行不能调换顺序</span></span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            printf(<span class="string">"Failed to copy context input to output stream codec context\n"</span>);</span><br><span class="line">            [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        pOutCodeContext-&gt;codec_tag = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (pOutFormatContext-&gt;oformat-&gt;flags &amp; <span class="built_in">AVFMT_GLOBALHEADER</span>) &#123;</span><br><span class="line">            pOutCodeContext-&gt;flags |= CODEC_FLAG_GLOBAL_HEADER;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ret = avcodec_parameters_from_context(out_stream-&gt;codecpar, pOutCodeContext);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            printf(<span class="string">"Failed to copy context input to output stream codec context\n"</span>);</span><br><span class="line">            [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    av_dump_format(pOutFormatContext, <span class="number">0</span>, out_filename, <span class="number">1</span>);       <span class="comment">//打印:输出格式的详细数据,例如时间,比特率,数据流,容器,元数据,辅助数据,编码,时间戳等</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//5.avio_open 打开输出文件,将输出文件中的数据读入到程序的 buffer 当中</span></span><br><span class="line">    <span class="keyword">if</span> (!(outputFormat-&gt;flags &amp; <span class="built_in">AVFMT_NOFILE</span>)) &#123;</span><br><span class="line">        ret = avio_open(&amp;pOutFormatContext-&gt;pb, out_filename, <span class="built_in">AVIO_FLAG_WRITE</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            printf(<span class="string">"Could not open output file %s "</span>, out_filename);</span><br><span class="line">            [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//6.avformat_write_header</span></span><br><span class="line">    ret = avformat_write_header(pOutFormatContext, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        printf(<span class="string">"Error occurred when opening output file\n"</span>);</span><br><span class="line">        [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//7.av_interleaved_write_frame]</span></span><br><span class="line">    <span class="keyword">int</span> frame_index = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">AVStream</span> *in_stream,*out_stream;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//7.1.av_read_frame Get an AVPacket 从输入文件中读取一个AVPacket</span></span><br><span class="line">        ret = av_read_frame(pInFormatContext, &amp;pPacket);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            printf(<span class="string">"Error av_read_frame\n"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        in_stream = pInFormatContext-&gt;streams[pPacket.stream_index];</span><br><span class="line">        out_stream = pOutFormatContext-&gt;streams[pPacket.stream_index];</span><br><span class="line">        <span class="comment">//7.2.Copy packet Convert PTS/DTS</span></span><br><span class="line">        pPacket.pts = av_rescale_q_rnd(pPacket.pts, in_stream-&gt;time_base, out_stream-&gt;time_base,</span><br><span class="line">                                       <span class="built_in">AV_ROUND_NEAR_INF</span> | <span class="built_in">AV_ROUND_PASS_MINMAX</span>);</span><br><span class="line">        </span><br><span class="line">        pPacket.dts = av_rescale_q_rnd(pPacket.dts, in_stream-&gt;time_base, out_stream-&gt;time_base,</span><br><span class="line">                                       <span class="built_in">AV_ROUND_NEAR_INF</span> | <span class="built_in">AV_ROUND_PASS_MINMAX</span>);</span><br><span class="line">        </span><br><span class="line">        pPacket.duration = av_rescale_q(pPacket.duration, in_stream-&gt;time_base, out_stream-&gt;time_base);</span><br><span class="line">        pPacket.pos = <span class="number">-1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//7.3</span></span><br><span class="line">        ret = av_interleaved_write_frame(pOutFormatContext, &amp;pPacket);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)&#123;</span><br><span class="line">            printf(<span class="string">"Error muxing packet\n"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        printf(<span class="string">"Write %8d frames to output file\n"</span>,frame_index);</span><br><span class="line">        av_packet_unref(&amp;pPacket);</span><br><span class="line">        frame_index ++;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">//8.av_write_trailer</span></span><br><span class="line">    av_write_trailer(pOutFormatContext);</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> gotoEnd];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>) gotoEnd&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    avformat_close_input(&amp;pInFormatContext);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (pOutFormatContext &amp;&amp; !(pOutFormatContext-&gt;flags &amp; <span class="built_in">AVFMT_NOFILE</span>)) &#123;</span><br><span class="line">        avio_close(pOutFormatContext-&gt;pb);</span><br><span class="line">    &#125;</span><br><span class="line">    avformat_free_context(pOutFormatContext);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span> &amp;&amp; ret != <span class="built_in">AVERROR_EOF</span>) &#123;</span><br><span class="line">        printf(<span class="string">"Error occurred.\n"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>最后我们可以看到输出结果如下:    </p>
+<pre><code class="objc">[libx264 @ <span class="number">0x103027200</span>] using cpu capabilities: ARMv8 NEON
+[libx264 @ <span class="number">0x103027200</span>] profile High, level <span class="number">3.0</span>
+Input <span class="meta">#0, mov,mp4,m4a,3gp,3g2,mj2, from '/var/containers/Bundle/Application/47E7540E-3936-400B-A86A-B9ED01BF661F/XXAudioVideo.app/sintel.mov':</span>
+  Metadata:
+    major_brand     : qt  
+    minor_version   : <span class="number">512</span>
+    compatible_brands: qt  
+    encoder         : Lavf56<span class="number">.36</span><span class="number">.100</span>
+  Duration: <span class="number">00</span>:<span class="number">00</span>:<span class="number">26.19</span>, start: <span class="number">-0.012000</span>, bitrate: <span class="number">1185</span> kb/s
+    Stream <span class="meta">#0:0(eng): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 848x480, 1056 kb/s, 25 fps, 25 tbr, 12800 tbn, 50 tbc (default)</span>
+    Metadata:
+      handler_name    : DataHandler
+      encoder         : Lavc56<span class="number">.41</span><span class="number">.100</span> libx264
+    Stream <span class="meta">#0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 127 kb/s (default)</span>
+    Metadata:
+      handler_name    : DataHandler
+Output <span class="meta">#0, flv, to '/private/var/mobile/Containers/Data/Application/B765D126-7DFF-4CBB-915F-B558AE46CDB8/tmp/mov2flv.flv':</span>
+    Stream <span class="meta">#0:0: Video: h264 (High), yuv420p, 848x480, q=2-31, 1056 kb/s</span>
+    Stream <span class="meta">#0:1: Audio: aac (LC), 48000 Hz, stereo, fltp, 127 kb/s</span>
+Write        <span class="number">0</span> frames to output file
+Write        <span class="number">1</span> frames to output file
+Write        <span class="number">2</span> frames to output file
+Write        <span class="number">3</span> frames to output file
+....
+...
+Write     <span class="number">1874</span> frames to output file
+Write     <span class="number">1875</span> frames to output file
+Error av_read_frame
+</code></pre>
+<h2 id="参考目录"><a href="#参考目录" class="headerlink" title="参考目录"></a>参考目录</h2><ol>
+<li><a href="http://blog.csdn.net/leixiaohua1020/article/details/25422685" target="_blank" rel="external">最简单的基于FFMPEG的封装格式转换器（无编解码）</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2017-07-29-FFmpeg3的iOS版的入门格式转换器(无编码).html" data-title="FFmpeg3的iOS版的入门格式转换器(无编码) | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2017-08-09-从零了解H264结构.html" title="从零了解H264结构">
+  <strong>上一篇：</strong><br/>
+  <span>
+  从零了解H264结构</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2017-07-17-iOS编解码入门篇-FFMPEG环境搭建.html"  title="iOS编解码入门篇(FFMPEG环境搭建)">
+ <strong>下一篇：</strong><br/> 
+ <span>iOS编解码入门篇(FFMPEG环境搭建)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-概念入门"><span class="toc-number">2.</span> <span class="toc-text">一. 概念入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-几个常用类的介绍"><span class="toc-number">3.</span> <span class="toc-text">二. 几个常用类的介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-流程介绍"><span class="toc-number">4.</span> <span class="toc-text">三. 流程介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考目录"><span class="toc-number">5.</span> <span class="toc-text">参考目录</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

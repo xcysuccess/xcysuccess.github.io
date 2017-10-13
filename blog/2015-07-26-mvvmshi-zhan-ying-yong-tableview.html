@@ -1,0 +1,541 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>MVVM实战应用之TableView的代码优化 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="MVVM">
+    <meta name="description" content="我一直觉得设计模式只是服务于业务场景，其实在绝大多数场景下MVC完全足够，如果说页面过于复杂，我才会去抽离Controller层的代码，实现逻辑分离。所以在写代码的时候我并不会一开始就用十分复杂的结构，只是在需要扩展的时候才会去重构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVVM实战应用之TableView的代码优化">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2015-07-26-mvvmshi-zhan-ying-yong-tableview.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="我一直觉得设计模式只是服务于业务场景，其实在绝大多数场景下MVC完全足够，如果说页面过于复杂，我才会去抽离Controller层的代码，实现逻辑分离。所以在写代码的时候我并不会一开始就用十分复杂的结构，只是在需要扩展的时候才会去重构">
+<meta property="og:image" content="http://www.iosxxx.com/images/mvvm/1.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/mvvm/2.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/mvvm/3.png">
+<meta property="og:updated_time" content="2016-06-02T14:19:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MVVM实战应用之TableView的代码优化">
+<meta name="twitter:description" content="我一直觉得设计模式只是服务于业务场景，其实在绝大多数场景下MVC完全足够，如果说页面过于复杂，我才会去抽离Controller层的代码，实现逻辑分离。所以在写代码的时候我并不会一开始就用十分复杂的结构，只是在需要扩展的时候才会去重构">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/mvvm/1.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015-07-26-mvvmshi-zhan-ying-yong-tableview.html" title="MVVM实战应用之TableView的代码优化" itemprop="url">MVVM实战应用之TableView的代码优化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-26T10:36:55.000Z" itemprop="datePublished"> 发表于 2015-07-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍一下MVC和MVVM"><span class="toc-number">1.</span> <span class="toc-text">介绍一下MVC和MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一、MVC"><span class="toc-number">2.</span> <span class="toc-text">一、MVC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是MVC？"><span class="toc-number">2.1.</span> <span class="toc-text">1. 什么是MVC？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-MVC缺点"><span class="toc-number">2.2.</span> <span class="toc-text">2. MVC缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-快速优化，增加中间层"><span class="toc-number">2.3.</span> <span class="toc-text">3. 快速优化，增加中间层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、MVVM"><span class="toc-number">3.</span> <span class="toc-text">二、MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、TableView实战"><span class="toc-number">4.</span> <span class="toc-text">三、TableView实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-TableViewDataSource"><span class="toc-number">4.1.</span> <span class="toc-text">2. TableViewDataSource:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结："><span class="toc-number">5.</span> <span class="toc-text">小结：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#demo下载链接"><span class="toc-number">6.</span> <span class="toc-text">demo下载链接:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">7.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="介绍一下MVC和MVVM"><a href="#介绍一下MVC和MVVM" class="headerlink" title="介绍一下MVC和MVVM"></a>介绍一下MVC和MVVM</h2><p>这篇文章先，然后结合一个UITableView的实例来进行分析</p>
+<p>在这里插一下个人观点，我一直觉得设计模式只是服务于业务场景，其实在绝大多数场景下<code>MVC</code>完全足够，如果说页面过于复杂，我才会去抽离<code>Controller</code>层的代码，实现逻辑分离。所以在写代码的时候我并不会一开始就用十分复杂的结构，只是在需要扩展的时候才会去重构。因为可能这一业务功能就这么多了，过两个版本这个功能就不需要了，所以我们得根据业务去衡量。</p>
+<h2 id="一、MVC"><a href="#一、MVC" class="headerlink" title="一、MVC"></a>一、MVC</h2><p>从写代码开始，用的最多的应该就属MVC和单例这两种设计模式了。</p>
+<h3 id="1-什么是MVC？"><a href="#1-什么是MVC？" class="headerlink" title="1. 什么是MVC？"></a>1. 什么是MVC？</h3><p>Model-View-Controller,Model持有数据,View显示与用户交互的界面,而View Controller调解Model和View之间的交互。<br><img src="/images/mvvm/1.gif" alt="&quot;MVC结构图&quot;" title="MVC结构图"><br><strong><code>View:</code></strong>基本的视图的代码，可以用<code>xib</code>或者<code>storyboard</code>,或者手写代码。实际开发中一般会自定义出一个View,并设置好内部的<code>UILabel</code>,<code>UIButton</code>等组件。<br><strong><code>Model:</code></strong>实体对象，最基本的原子单位<br><strong><code>Controller:</code></strong>Controller是app的“胶水代码”：协调模型和视图之间的所有交互。控制器负责管理他们所拥有的视 图的视图层次结构,还要响应视图的<code>loading</code>、<code>appearing</code>、<code>disappearing</code>等等 </p>
+<h3 id="2-MVC缺点"><a href="#2-MVC缺点" class="headerlink" title="2. MVC缺点"></a>2. MVC缺点</h3><p>厚重的<code>View Controller</code>很难维护（由于其庞大的规模)，包含几十个属性，使他们的状态难以管理；遵循许多协议（<code>protocol</code>），导致协议的响应代码和<code>controller</code>的逻辑代码混淆在一起。<br><a id="more"></a></p>
+<h3 id="3-快速优化，增加中间层"><a href="#3-快速优化，增加中间层" class="headerlink" title="3. 快速优化，增加中间层"></a>3. 快速优化，增加中间层</h3><p><strong><code>Control:</code></strong>用来做网络交互和数据存储用，核心点在于数据的管理<br><strong><code>Component:</code></strong>自定义的组件<br>这种层可以根据业务的存在继续细分，这里不作过多解释。</p>
+<h2 id="二、MVVM"><a href="#二、MVVM" class="headerlink" title="二、MVVM"></a>二、MVVM</h2><p><img src="/images/mvvm/2.gif" alt="&quot;MVVM结构图&quot;" title="MVVM结构图"><br><strong><code>ViewModel:</code></strong>MVVM就是一个经过优化的MVC，这意味着它可以兼容，也本质上还是一个MVC结构.<br>是一个放置用户输入验证逻辑，视图显示逻辑，由于展示逻辑（presentation logic）放在了ViewModel中（比如model的值映射到一个格式化的字符串），视图控制器本身就会不再臃肿。<br>理解成Controller和Model之间的一座桥梁即可</p>
+<h2 id="三、TableView实战"><a href="#三、TableView实战" class="headerlink" title="三、TableView实战"></a>三、TableView实战</h2><p><img src="/images/mvvm/3.png" alt="&quot;TableView结构&quot;" title="TableView结构">  </p>
+<p>这里着重介绍一下数据源<code>TableViewDataSource</code>和<code>QQViewModel</code></p>
+<p>###<strong>1.<code>QQViewModel:</code></strong>  </p>
+<p><strong>.h</strong>文件  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">@class</span> <span class="title">QQModel</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">QQViewModel</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line">- (instancetype)initWithQQViewModel:(QQModel *)qqModel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) QQModel *qqModel;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">copy</span>,<span class="keyword">nonatomic</span>) <span class="built_in">NSString</span> *content;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p><strong>.m</strong>文件  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"QQViewModel.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"QQModel.h"</span></span></span><br><span class="line">	</span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">QQViewModel</span></span></span><br><span class="line"></span><br><span class="line">- (instancetype)initWithQQViewModel:(QQModel *)qqModel</span><br><span class="line">&#123;	</span><br><span class="line">	 <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init])&#123;  </span><br><span class="line">	   </span><br><span class="line">	   <span class="keyword">self</span>.qqModel = qqModel;</span><br><span class="line">   	<span class="keyword">self</span>.content = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@View"</span>,qqModel.title];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>如上述所示，<code>QQModel</code>是一个最基本的原子单位，<code>QQViewModel</code>是包括了<code>QQModel</code>，以及<code>View</code>所需要展示的一些字段，我们可以将这些字段的逻辑都封装在<code>QQViewModel</code>中，减少<code>Controller</code>的臃肿。<code>View</code>层只要直接拿到<code>ViewModel</code>即可，不用<code>Controller</code>在转哦概念图做转换。上述的<code>content</code>就是我们需要的字段，其他可根据View自行扩充。  </p>
+<h3 id="2-TableViewDataSource"><a href="#2-TableViewDataSource" class="headerlink" title="2. TableViewDataSource:"></a>2. <code>TableViewDataSource:</code></h3><p>在请求到网络数据后，刷新数据源  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 设置表格的数据源 */</span></span><br><span class="line">- (<span class="keyword">void</span>)setupTableViewDataSource</span><br><span class="line">&#123;</span><br><span class="line">    TableViewCellConfigureBlock configureCell = ^(QQTableCell *cell, <span class="keyword">id</span> item)&#123;</span><br><span class="line">        [cell configureForData:item];</span><br><span class="line">    &#125;;</span><br><span class="line">    _qqDataSource = [[QQDataSource alloc] initWithItems:_publicModelArray</span><br><span class="line">                                         cellIdentifier:QQCELLIDENDIFIFY</span><br><span class="line">                                     configureCellBlock:configureCell];</span><br><span class="line">    </span><br><span class="line">    _qqTableView.dataSource = _qqDataSource;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是<code>QQDataSource</code>的核心就是通过<code>block</code>将建立起一个直接映射到<code>Cell</code>上的作用，起到一个数据透传的作用。动态地通过<code>item</code>去设置<code>cell</code>的值。在<code>QQDataSource</code>中的处理:  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"indexPath.row,indexPath.section:(%ld,%ld)"</span>,indexPath.row,indexPath.section);</span><br><span class="line">    QQTableCell *cell = [tableView dequeueReusableCellWithIdentifier:<span class="keyword">self</span>.cellIdentifier forIndexPath:indexPath];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">id</span> item = [<span class="keyword">self</span> itemAtIndexPath:indexPath];</span><br><span class="line">    <span class="keyword">self</span>.configureCellBlock(cell,item);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> cell;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结："><a href="#小结：" class="headerlink" title="小结："></a>小结：</h2><p>在前几年的工作中，每次写新功能大概就是这个套路，先新建几个文件夹，然后分好上述的几层。再深层次优化就是做一些公共组件之类的，设置一些父类，抽出公共代码，比如公共的网络连接库，SuperController之类。  </p>
+<h2 id="demo下载链接"><a href="#demo下载链接" class="headerlink" title="demo下载链接:"></a>demo下载链接:</h2><p><a href="https://github.com/xcysuccess/TableViewMVVM" target="_blank" rel="external">https://github.com/xcysuccess/TableViewMVVM</a>  </p>
+<h2 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h2><p>1.<a href="http://blog.nodejitsu.com/scaling-isomorphic-javascript-code/" target="_blank" rel="external">scaling-isomorphic-javascript-code</a><br>2.<a href="https://github.com/lizelu/MVVM" target="_blank" rel="external">https://github.com/lizelu/MVVM</a><br>3.<a href="https://github.com/lizelu/MVVM" target="_blank" rel="external">http://objccn.io/issue-13-1/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2015-07-26-mvvmshi-zhan-ying-yong-tableview.html" data-title="MVVM实战应用之TableView的代码优化 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015-08-02-li-yong-swizzleda-zao-qie-huan-zhu-ti-de-bian-se-ji-zhu.html" title="利用swizzle打造切换主题的变色技术">
+  <strong>上一篇：</strong><br/>
+  <span>
+  利用swizzle打造切换主题的变色技术</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015-06-30-xcodediao-shi-(ru-men-pian)chang-yong-ming-ling.html"  title="xcode调试效率">
+ <strong>下一篇：</strong><br/> 
+ <span>xcode调试效率
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#介绍一下MVC和MVVM"><span class="toc-number">1.</span> <span class="toc-text">介绍一下MVC和MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一、MVC"><span class="toc-number">2.</span> <span class="toc-text">一、MVC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是MVC？"><span class="toc-number">2.1.</span> <span class="toc-text">1. 什么是MVC？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-MVC缺点"><span class="toc-number">2.2.</span> <span class="toc-text">2. MVC缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-快速优化，增加中间层"><span class="toc-number">2.3.</span> <span class="toc-text">3. 快速优化，增加中间层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、MVVM"><span class="toc-number">3.</span> <span class="toc-text">二、MVVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、TableView实战"><span class="toc-number">4.</span> <span class="toc-text">三、TableView实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-TableViewDataSource"><span class="toc-number">4.1.</span> <span class="toc-text">2. TableViewDataSource:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结："><span class="toc-number">5.</span> <span class="toc-text">小结：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#demo下载链接"><span class="toc-number">6.</span> <span class="toc-text">demo下载链接:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">7.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

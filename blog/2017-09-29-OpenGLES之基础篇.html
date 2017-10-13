@@ -1,0 +1,700 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>OpenGLES基础篇 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="opengles,opengl,图形图像">
+    <meta name="description" content="看完后应该对整个OpenGLES会有一个整体上的了解，更加方便大家了解其他资料">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenGLES基础篇">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2017-09-29-OpenGLES之基础篇.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="看完后应该对整个OpenGLES会有一个整体上的了解，更加方便大家了解其他资料">
+<meta property="og:image" content="http://www.iosxxx.com/../images/opengles/2.jpg">
+<meta property="og:image" content="http://www.iosxxx.com/../images/opengles/1.png">
+<meta property="og:image" content="http://www.iosxxx.com/../images/opengles/3.jpg">
+<meta property="og:updated_time" content="2017-09-29T11:20:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenGLES基础篇">
+<meta name="twitter:description" content="看完后应该对整个OpenGLES会有一个整体上的了解，更加方便大家了解其他资料">
+<meta name="twitter:image" content="http://www.iosxxx.com/../images/opengles/2.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2017-09-29-OpenGLES之基础篇.html" title="OpenGLES基础篇" itemprop="url">OpenGLES基础篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2017-09-29T03:00:57.000Z" itemprop="datePublished"> 发表于 2017-09-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-概念"><span class="toc-number">2.</span> <span class="toc-text">一. 概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-基础"><span class="toc-number">2.0.1.</span> <span class="toc-text">1. 基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-图形渲染管线"><span class="toc-number">2.0.2.</span> <span class="toc-text">2. 图形渲染管线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-对象"><span class="toc-number">2.0.3.</span> <span class="toc-text">3. 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-纹理"><span class="toc-number">2.0.4.</span> <span class="toc-text">4. 纹理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-坐标系统"><span class="toc-number">2.0.5.</span> <span class="toc-text">4.坐标系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-摄像机"><span class="toc-number">2.0.6.</span> <span class="toc-text">5. 摄像机</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-理解"><span class="toc-number">3.</span> <span class="toc-text">二. 理解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-脑图总结"><span class="toc-number">3.0.1.</span> <span class="toc-text">1. 脑图总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-VAO-VBO-EBO到底是什么？"><span class="toc-number">3.0.2.</span> <span class="toc-text">2. VAO/VBO/EBO到底是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-VBO"><span class="toc-number">3.0.2.1.</span> <span class="toc-text">1. VBO</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-VAO"><span class="toc-number">3.0.2.2.</span> <span class="toc-text">2. VAO</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-EBO"><span class="toc-number">3.0.2.3.</span> <span class="toc-text">3. EBO</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-结论"><span class="toc-number">3.0.2.4.</span> <span class="toc-text">4. 结论</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-实战"><span class="toc-number">4.</span> <span class="toc-text">三. 实战</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-OpenGLES上需要注意的几点"><span class="toc-number">5.</span> <span class="toc-text">四. OpenGLES上需要注意的几点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-纹理过滤设置错误导致黑屏"><span class="toc-number">5.0.1.</span> <span class="toc-text">1. 纹理过滤设置错误导致黑屏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-减少drawArray"><span class="toc-number">5.0.2.</span> <span class="toc-text">2. 减少drawArray</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#demo下载"><span class="toc-number">6.</span> <span class="toc-text">demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">7.</span> <span class="toc-text">参考资料</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>学习OpenGL网上资料很多，但是这里着重推荐 <a href="https://learnopengl-cn.github.io/intro/" target="_blank" rel="external">learnopengl-cn</a>, 这个网站带领我们从零开始学习，每一步都非常详细。就是环境配置稍微有点麻烦。鉴于如此，我将其第一章的部分代码转换成了OpenGLES版，在手机上直接跑。方便大家阅读。这里我会抽出learnopengl的核心部分进行讲解。如果大家不嫌麻烦我这边也有教程教大家在Mac上搭建环境,<a href="https://github.com/xcysuccess/LearnOpenGLNote/blob/master/Note/1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/Mac%2BOpenGL%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.md" target="_blank" rel="external">Mac+OpenGL环境搭建</a></p>
+<h2 id="一-概念"><a href="#一-概念" class="headerlink" title="一. 概念"></a>一. 概念</h2><p>这里虽然是讲的概念，但是这边把概念按类型不同做了区分。<br>请大家先一个个对着表格耐心先看完，先看一遍。然后后续会对这些有一个讲解。</p>
+<h4 id="1-基础"><a href="#1-基础" class="headerlink" title="1. 基础"></a>1. 基础</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">基础</th>
+<th style="text-align:left">概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">CPU</td>
+<td style="text-align:left">CPU的结构大概是,20%运算(Compute)单元,80%逻辑(Logic)单元</td>
+</tr>
+<tr>
+<td style="text-align:left">GPU</td>
+<td style="text-align:left">100%运算单元</td>
+</tr>
+</tbody>
+</table>
+<p><img src="../images/opengles/2.jpg" alt="">   </p>
+<h4 id="2-图形渲染管线"><a href="#2-图形渲染管线" class="headerlink" title="2. 图形渲染管线"></a>2. 图形渲染管线</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">图形渲染管线</th>
+<th style="text-align:left">概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">顶点着色器</td>
+<td style="text-align:left">它把一个单独的顶点作为输入</td>
+</tr>
+<tr>
+<td style="text-align:left">图元装配</td>
+<td style="text-align:left">将顶点着色器输出的所有顶点作为输入,并所有的点装配成指定图元的形状,比如三角形</td>
+</tr>
+<tr>
+<td style="text-align:left">几何着色器</td>
+<td style="text-align:left">几何着色器把图元形式的一系列顶点的集合作为输入，它可以通过产生新顶点构造出新的图元来生成其他形状</td>
+</tr>
+<tr>
+<td style="text-align:left">光栅化</td>
+<td style="text-align:left">把图元映射为最终屏幕上相应的像素，生成供片段着色器(Fragment Shader)使用的片段(Fragment)。<br>在片段着色器运行之前会执行裁切(Clipping),裁切会丢弃超出你的视图以外的所有像素，用来提升执行效率</td>
+</tr>
+<tr>
+<td style="text-align:left">片元着色器</td>
+<td style="text-align:left">是计算一个像素的最终颜色，这也是所有OpenGL高级效果产生的地方。<br>通常，片段着色器包含3D场景的数据（比如光照、阴影、光的颜色等等），这些数据可以被用来计算最终像素的颜色</td>
+</tr>
+<tr>
+<td style="text-align:left">Alpha测试与混合</td>
+<td style="text-align:left">这个阶段检测片段的对应的深度,用它们来判断这个像素是其它物体的前面还是后面，决定是否应该丢弃。<br>这个阶段也会检查alpha值（alpha值定义了一个物体的透明度）并对物体进行混合(Blend)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-对象"><a href="#3-对象" class="headerlink" title="3. 对象"></a>3. 对象</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">对象</th>
+<th style="text-align:left">概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">VBO</td>
+<td style="text-align:left">顶点数组对象</td>
+</tr>
+<tr>
+<td style="text-align:left">VAO</td>
+<td style="text-align:left">顶点缓冲对象</td>
+</tr>
+<tr>
+<td style="text-align:left">EBO</td>
+<td style="text-align:left">索引缓冲对象</td>
+</tr>
+<tr>
+<td style="text-align:left">RBO</td>
+<td style="text-align:left">渲染缓冲对象(Renderbuffer Object),一个可用的帧缓冲附件类型,渲染缓冲对象是一个真正的缓冲，即一系列的字节、整数、像素等，渲染缓冲对象附加的好处是，它会将数据储存为OpenGL原生的渲染格式，它是为离屏渲染到帧缓冲优化过的</td>
+</tr>
+<tr>
+<td style="text-align:left">FBO</td>
+<td style="text-align:left">用于写入颜色值的颜色缓冲、用于写入深度信息的深度缓冲和允许我们根据一些条件丢弃特定片段的模板缓冲。这些缓冲结合起来叫做帧缓冲</td>
+</tr>
+</tbody>
+</table>
+<h4 id="4-纹理"><a href="#4-纹理" class="headerlink" title="4. 纹理"></a>4. 纹理</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">纹理</th>
+<th style="text-align:left">概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">纹理</td>
+<td style="text-align:left">物体表面的图案</td>
+</tr>
+<tr>
+<td style="text-align:left">纹理环绕方式</td>
+<td style="text-align:left">纹理坐标的范围通常是从(0, 0)到(1, 1)，那如果我们把纹理坐标设置在范围之外的循环,分为<code>GL_REPEAT</code>, <code>GL_MIRRORED_REPEAT</code>, <code>GL_CLAMP_TO_EDGE</code>, <code>GL_CLAMP_TO_BORDER</code></td>
+</tr>
+<tr>
+<td style="text-align:left">纹理过滤（Texture Filtering）</td>
+<td style="text-align:left">分辨率很低的时候，我们把纹理像素映射到纹理坐标。分为邻近过滤(Nearest Neighbor Filtering)和线性过滤((Bi)linear Filtering)</td>
+</tr>
+<tr>
+<td style="text-align:left">多重渐远纹理</td>
+<td style="text-align:left">它简单来说就是一系列的纹理图像，后一个纹理图像是前一个的二分之一。多级渐远纹理背后的理念很简单：距观察者的距离超过一定的阈值，OpenGL会使用不同的多级渐远纹理，即最适合物体的距离的那个</td>
+</tr>
+<tr>
+<td style="text-align:left">纹理单元</td>
+<td style="text-align:left">OpenGL至少保证有16个纹理单元供你使用，也就是说你可以激活从<code>GL_TEXTURE0</code>到<code>GL_TEXTRUE15</code>。它们都是按顺序定义的，所以我们也可以通过<code>GL_TEXTURE0 + 8</code>的方式获得<code>GL_TEXTURE8</code>，这在当我们需要循环一些纹理单元的时候会很有用</td>
+</tr>
+</tbody>
+</table>
+<h4 id="4-坐标系统"><a href="#4-坐标系统" class="headerlink" title="4.坐标系统"></a>4.坐标系统</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">坐标系统</th>
+<th style="text-align:left">概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">局部空间(Local Space)</td>
+<td style="text-align:left">局部坐标是对象相对于局部原点的坐标，也是物体起始的坐标</td>
+</tr>
+<tr>
+<td style="text-align:left">世界空间(World Space)</td>
+<td style="text-align:left">世界空间坐标是处于一个更大的空间范围的。这些坐标相对于世界的全局原点，它们会和其它物体一起相对于世界的原点进行摆放</td>
+</tr>
+<tr>
+<td style="text-align:left">观察空间(View Space)</td>
+<td style="text-align:left">每个坐标都是从摄像机或者说观察者的角度进行观察的</td>
+</tr>
+<tr>
+<td style="text-align:left">裁剪空间(Clip Space)</td>
+<td style="text-align:left">裁剪坐标会被处理至-1.0到1.0的范围内，并判断哪些顶点将会出现在屏幕上</td>
+</tr>
+<tr>
+<td style="text-align:left">屏幕空间(Screen Space)</td>
+<td style="text-align:left">视口变换(Viewport Transform)的过程。视口变换将位于-1.0到1.0范围的坐标变换到由glViewport函数所定义的坐标范围内。最后变换出来的坐标将会送到光栅器，将其转化为片段</td>
+</tr>
+</tbody>
+</table>
+<h4 id="5-摄像机"><a href="#5-摄像机" class="headerlink" title="5. 摄像机"></a>5. 摄像机</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">摄像机</th>
+<th style="text-align:left">概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">LookAt矩阵</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">欧拉角</td>
+<td style="text-align:left">被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向</td>
+</tr>
+</tbody>
+</table>
+<h2 id="二-理解"><a href="#二-理解" class="headerlink" title="二. 理解"></a>二. 理解</h2><p>上述讲了一大堆概念，这里给大家说一下自己的一些理解以及对一点难解的地方做一下说明</p>
+<h4 id="1-脑图总结"><a href="#1-脑图总结" class="headerlink" title="1. 脑图总结"></a>1. 脑图总结</h4><p><img src="../images/opengles/1.png" alt="">  </p>
+<h4 id="2-VAO-VBO-EBO到底是什么？"><a href="#2-VAO-VBO-EBO到底是什么？" class="headerlink" title="2. VAO/VBO/EBO到底是什么？"></a>2. VAO/VBO/EBO到底是什么？</h4><p><img src="../images/opengles/3.jpg" alt="">   </p>
+<h5 id="1-VBO"><a href="#1-VBO" class="headerlink" title="1. VBO"></a>1. VBO</h5><p>VBO是一个顶点缓冲数组，记录顶点的属性而存在，比如颜色，位置，纹理坐标等属性。它的存在是想将显示列表的特性（绘制时不传输数据，快）和顶点数组的特性（数据打包传输，修改灵活）结合起来。以前没有VBO的时候，每次绘制都要用过<code>glVertexPointer</code>进行一次数据传递，将CPU数据拷贝到GPU。有了VBO之后，只需要一次传递即可。    </p>
+<p><strong>造成的问题</strong><br>如果要绘制两个三角形。那么将<code>glBindBuffer()-glEnableVertexAttribArray()-glVertexAttribPointer-glDrawArray()</code>进行重复。   </p>
+<h5 id="2-VAO"><a href="#2-VAO" class="headerlink" title="2. VAO"></a>2. VAO</h5><p>针对上面的问题。VAO就诞生了。VAO是用来简化绘制代码。现在代码变成了如下所示    </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> VAO;</span><br><span class="line">glGenVertexArrays(<span class="number">1</span>, &amp;VAO);  </span><br><span class="line">glBindVertexArray(VAO);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ARRAY_BUFFER, VBO);</span><br><span class="line">glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line"></span><br><span class="line">glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);</span><br><span class="line">glBufferData(GL_ELEMENT_ARRAY_BUFFER, <span class="keyword">sizeof</span>(indices), indices, GL_STATIC_DRAW);</span><br><span class="line"></span><br><span class="line">glVertexAttribPointer(<span class="number">0</span>, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">3</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">glEnableVertexAttribArray(<span class="number">0</span>); </span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 绘制</span></span><br><span class="line">glBindVertexArray(VAO);</span><br><span class="line">glDrawElements(GL_TRIANGLES, <span class="number">6</span>, GL_UNSIGNED_INT, <span class="number">0</span>)</span><br><span class="line">glBindVertexArray(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong><br>VAO不是 buffer-object，所以不作数据存储，VAO里面存了一个EBO的指针以及一个顶点属性数组。结构如下.   </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> VertexAttribute  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">bool</span> bIsEnabled = GL_FALSE;  </span><br><span class="line">    <span class="keyword">int</span> iSize = <span class="number">4</span>; <span class="comment">//This is the number of elements in this attribute, 1-4.  </span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> iStride = <span class="number">0</span>;  </span><br><span class="line">    VertexAttribType eType = GL_FLOAT;  </span><br><span class="line">    <span class="keyword">bool</span> bIsNormalized = GL_FALSE;  </span><br><span class="line">    <span class="keyword">bool</span> bIsIntegral = GL_FALSE;  </span><br><span class="line">    <span class="keyword">void</span> * pBufferObjectOffset = <span class="number">0</span>;  </span><br><span class="line">    BufferObject * pBufferObj = <span class="number">0</span>;  </span><br><span class="line">&#125;;  </span><br><span class="line">    </span><br><span class="line"><span class="keyword">struct</span> VertexArrayObject  </span><br><span class="line">&#123;  </span><br><span class="line">    BufferObject *pElementArrayBufferObject = <span class="literal">NULL</span>;  </span><br><span class="line">    VertexAttribute attributes[GL_MAX_VERTEX_ATTRIB];  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-EBO"><a href="#3-EBO" class="headerlink" title="3. EBO"></a>3. EBO</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> vertices[] = &#123;</span><br><span class="line">    <span class="comment">// 第一个三角形</span></span><br><span class="line">    <span class="number">0.5</span>f, <span class="number">0.5</span>f, <span class="number">0.0</span>f,   <span class="comment">// 右上角</span></span><br><span class="line">    <span class="number">0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f,  <span class="comment">// 右下角</span></span><br><span class="line">    <span class="number">-0.5</span>f, <span class="number">0.5</span>f, <span class="number">0.0</span>f,  <span class="comment">// 左上角</span></span><br><span class="line">    <span class="comment">// 第二个三角形</span></span><br><span class="line">    <span class="number">0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f,  <span class="comment">// 右下角</span></span><br><span class="line">    <span class="number">-0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f, <span class="comment">// 左下角</span></span><br><span class="line">    <span class="number">-0.5</span>f, <span class="number">0.5</span>f, <span class="number">0.0</span>f   <span class="comment">// 左上角</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>有几个顶点叠加了。我们指定了右下角和左上角两次！一个矩形只有4个而不是6个顶点，这样就产生50%的额外开销.这里我们解决方式是通过索引绘制</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> vertices[] = &#123;</span><br><span class="line">    <span class="number">0.5</span>f, <span class="number">0.5</span>f, <span class="number">0.0</span>f,   <span class="comment">// 右上角</span></span><br><span class="line">    <span class="number">0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f,  <span class="comment">// 右下角</span></span><br><span class="line">    <span class="number">-0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f, <span class="comment">// 左下角</span></span><br><span class="line">    <span class="number">-0.5</span>f, <span class="number">0.5</span>f, <span class="number">0.0</span>f   <span class="comment">// 左上角</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> indices[] = &#123; <span class="comment">// 注意索引从0开始! </span></span><br><span class="line">    <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="comment">// 第一个三角形</span></span><br><span class="line">    <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>  <span class="comment">// 第二个三角形</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="4-结论"><a href="#4-结论" class="headerlink" title="4. 结论"></a>4. 结论</h5><p>VBO是为了均衡数据的传输效率与灵活修改性；VAO的本质是储存绘制状态，简化绘制代码</p>
+<h2 id="三-实战"><a href="#三-实战" class="headerlink" title="三. 实战"></a>三. 实战</h2><p>这里用了VAO，VBO，EBO，demo在最后的地址中可以下载</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br></pre></td><td class="code"><pre><span class="line">GLfloat vertices[] = &#123;</span><br><span class="line">    <span class="comment">//     ---- 位置 ----       ---- 颜色 ----    - 纹理坐标 -</span></span><br><span class="line">    <span class="number">0.5</span>f,  <span class="number">0.5</span>f, <span class="number">0.0</span>f,   <span class="number">1.0</span>f, <span class="number">0.0</span>f, <span class="number">0.0</span>f,   <span class="number">1.0</span>f, <span class="number">1.0</span>f,   <span class="comment">// 右上</span></span><br><span class="line">    <span class="number">0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f,   <span class="number">0.0</span>f, <span class="number">1.0</span>f, <span class="number">0.0</span>f,   <span class="number">1.0</span>f, <span class="number">0.0</span>f,   <span class="comment">// 右下</span></span><br><span class="line">    <span class="number">-0.5</span>f, <span class="number">-0.5</span>f, <span class="number">0.0</span>f,  <span class="number">0.0</span>f, <span class="number">0.0</span>f, <span class="number">1.0</span>f,   <span class="number">0.0</span>f, <span class="number">0.0</span>f,   <span class="comment">// 左下</span></span><br><span class="line">    <span class="number">-0.5</span>f,  <span class="number">0.5</span>f, <span class="number">0.0</span>f,  <span class="number">1.0</span>f, <span class="number">1.0</span>f, <span class="number">0.0</span>f,   <span class="number">0.0</span>f, <span class="number">1.0</span>f    <span class="comment">// 左上</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> indices[] = &#123;</span><br><span class="line">    <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="comment">// first triangle</span></span><br><span class="line">    <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>  <span class="comment">// second triangle</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXOpenGLView</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CAEAGLLayer</span> *_eaglLayer;    <span class="comment">//提供了一个OpenGLES渲染环境</span></span><br><span class="line">    EAGLContext *_context;      <span class="comment">//渲染上下文，管理所有使用OpenGL ES 进行描绘的状态、命令以及资源信息</span></span><br><span class="line">    GLuint _colorRenderBuffer;  <span class="comment">//颜色渲染缓存</span></span><br><span class="line">    GLuint _frameBuffer;        <span class="comment">//帧缓存</span></span><br><span class="line">    </span><br><span class="line">    GLuint _programHandle;      <span class="comment">//着色器程序</span></span><br><span class="line">    GLuint _positionSlot;</span><br><span class="line">    GLuint _inputColorSlot;</span><br><span class="line">    GLuint _texCoordSlot;</span><br><span class="line">    </span><br><span class="line">    GLuint _VAO;</span><br><span class="line">    GLuint _texture;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXOpenGLView</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">id</span>)initWithFrame:(<span class="built_in">CGRect</span>)frame</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> initWithFrame:frame];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (Class)layerClass &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">CAEAGLLayer</span> class];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) destoryRenderAndFrameBuffer&#123;</span><br><span class="line">    glDeleteBuffers(<span class="number">1</span>, &amp;_frameBuffer);</span><br><span class="line">    _frameBuffer = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    glDeleteBuffers(<span class="number">1</span>, &amp;_colorRenderBuffer);</span><br><span class="line">    _colorRenderBuffer = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    glDeleteTextures(<span class="number">1</span>, &amp;_texture);</span><br><span class="line">    glDeleteProgram(_programHandle);</span><br><span class="line">    </span><br><span class="line">    glDeleteVertexArraysOES(<span class="number">1</span>, &amp;_VAO);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)layoutSubviews &#123;</span><br><span class="line">    [<span class="keyword">super</span> layoutSubviews];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setupLayer];</span><br><span class="line">    [<span class="keyword">self</span> setupContext];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> destoryRenderAndFrameBuffer];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setupRenderBuffer];</span><br><span class="line">    [<span class="keyword">self</span> setupFrameBuffer];</span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> setupGLProgram];</span><br><span class="line">    [<span class="keyword">self</span> setupVAOVBOEBO];</span><br><span class="line">    [<span class="keyword">self</span> setupTexture];</span><br><span class="line"></span><br><span class="line">    [<span class="keyword">self</span> render];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#pragma mark- Setup</span></span><br><span class="line">- (<span class="keyword">void</span>) setupLayer&#123;</span><br><span class="line">    _eaglLayer = (<span class="built_in">CAEAGLLayer</span>*)<span class="keyword">self</span>.layer;</span><br><span class="line">    _eaglLayer.opaque = <span class="literal">YES</span>;                <span class="comment">//默认透明,不透明度是</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//kEAGLDrawablePropertyRetainedBacking:表示是否要保持呈现的内容不变，默认为NO</span></span><br><span class="line">    <span class="comment">//设置描绘属性，在这里设置不维持渲染内容以及颜色格式为 RGBA8</span></span><br><span class="line">    _eaglLayer.drawableProperties = @&#123;kEAGLDrawablePropertyRetainedBacking:@(<span class="literal">NO</span>),</span><br><span class="line">                                      kEAGLDrawablePropertyColorFormat:kEAGLColorFormatRGBA8</span><br><span class="line">                                      &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) setupContext&#123;</span><br><span class="line">    EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES2;</span><br><span class="line">    _context = [[EAGLContext alloc] initWithAPI:api];</span><br><span class="line">    <span class="keyword">if</span>(!_context)&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Failed to initialize OpenGLES 2.0 context"</span>);</span><br><span class="line">        exit(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//设置成当前上下文</span></span><br><span class="line">    <span class="keyword">if</span>(![EAGLContext setCurrentContext:_context])&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Failed to set current OpenGL context"</span>);</span><br><span class="line">        exit(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) setupGLProgram&#123;</span><br><span class="line">    <span class="built_in">NSString</span> *vertexShaderPath = [[<span class="built_in">NSBundle</span> mainBundle] pathForResource:<span class="string">@"Shader"</span> ofType:<span class="string">@"vsh"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *fragmentShaderPath = [[<span class="built_in">NSBundle</span> mainBundle] pathForResource:<span class="string">@"Shader"</span> ofType:<span class="string">@"fsh"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//Create Program, attach shaders,compile and link program</span></span><br><span class="line">    _programHandle = [[GLSLUtils sharedInstance] loadProgramWithVertexFilePath:vertexShaderPath FragmentFilePath:fragmentShaderPath];</span><br><span class="line">    <span class="keyword">if</span>(_programHandle == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@" &gt;&gt; Error: Failed to setup program."</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Get attribute slot from program</span></span><br><span class="line">    _positionSlot = glGetAttribLocation(_programHandle, <span class="string">"vPosition"</span>);</span><br><span class="line">    _inputColorSlot = glGetAttribLocation(_programHandle, <span class="string">"vInputColor"</span>);</span><br><span class="line">    _texCoordSlot = glGetAttribLocation(_programHandle, <span class="string">"vTexCoord"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setupVAOVBOEBO &#123;</span><br><span class="line">    GLuint VBO,EBO;</span><br><span class="line">    glGenVertexArraysOES(<span class="number">1</span>, &amp;_VAO);</span><br><span class="line">    glGenBuffers(<span class="number">1</span>, &amp;VBO);</span><br><span class="line">    glGenBuffers(<span class="number">1</span>, &amp;EBO);</span><br><span class="line">    <span class="comment">//1. 绑定VAO</span></span><br><span class="line">    glBindVertexArrayOES(_VAO);</span><br><span class="line">    <span class="comment">//2. 把顶点数组复制到缓冲中供OpenGL使用</span></span><br><span class="line">    glBindBuffer(GL_ARRAY_BUFFER, VBO);</span><br><span class="line">    glBufferData(GL_ARRAY_BUFFER, <span class="keyword">sizeof</span>(vertices), vertices, GL_STATIC_DRAW);</span><br><span class="line">    </span><br><span class="line">    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);</span><br><span class="line">    glBufferData(GL_ELEMENT_ARRAY_BUFFER, <span class="keyword">sizeof</span>(indices), indices, GL_STATIC_DRAW);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//3. 设置顶点属性指针</span></span><br><span class="line">    glVertexAttribPointer(_positionSlot, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)<span class="number">0</span>);</span><br><span class="line">    glEnableVertexAttribArray(_positionSlot);</span><br><span class="line">    </span><br><span class="line">    glVertexAttribPointer(_inputColorSlot, <span class="number">3</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">3</span>* <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">    glEnableVertexAttribArray(_inputColorSlot);</span><br><span class="line">    </span><br><span class="line">    glVertexAttribPointer(_texCoordSlot, <span class="number">2</span>, GL_FLOAT, GL_FALSE, <span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">float</span>), (<span class="keyword">void</span>*)(<span class="number">6</span>* <span class="keyword">sizeof</span>(<span class="keyword">float</span>)));</span><br><span class="line">    glEnableVertexAttribArray(_texCoordSlot);</span><br><span class="line">    </span><br><span class="line">    glBindVertexArrayOES(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)setupTexture &#123;</span><br><span class="line">    <span class="built_in">NSString</span> *path = [[<span class="built_in">NSBundle</span> mainBundle] pathForResource:<span class="string">@"wood"</span> ofType:<span class="string">@"jpg"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *data;</span><br><span class="line">    <span class="keyword">int</span> size;</span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 加载纹理</span></span><br><span class="line">    <span class="keyword">if</span> (read_jpeg_file(path.UTF8String, &amp;data, &amp;size, &amp;width, &amp;height) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        printf(<span class="string">"%s\n"</span>, <span class="string">"decode fail"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    glGenTextures(<span class="number">1</span>, &amp;_texture);</span><br><span class="line">    glBindTexture(GL_TEXTURE_2D, _texture);</span><br><span class="line">    <span class="comment">//set the texture wrapping parameters</span></span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line">    <span class="comment">//set the texture filtering parameters</span></span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br><span class="line">    <span class="comment">//第一个参数指定了纹理目标(Target)</span></span><br><span class="line">    <span class="comment">//第二个参数为纹理指定多级渐远纹理的级</span></span><br><span class="line">    <span class="comment">//第三个参数告诉OpenGL我们希望把纹理储存为何种格式</span></span><br><span class="line">    <span class="comment">//第七第八个参数定义了源图的格式和数据类型</span></span><br><span class="line">    glTexImage2D(GL_TEXTURE_2D, <span class="number">0</span>, GL_RGB, width, height, <span class="number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, data);</span><br><span class="line">    glGenerateMipmap(GL_TEXTURE_2D);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (data) &#123;</span><br><span class="line">        free(data);</span><br><span class="line">        data = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#pragma mark- Draw</span></span><br><span class="line"><span class="comment">//缓冲区分为三种-1.模板缓冲区 2.颜色缓冲区 3.深度缓冲区 ，RenderBuffer是指颜色缓冲区</span></span><br><span class="line">- (<span class="keyword">void</span>) setupRenderBuffer&#123;</span><br><span class="line">    glGenRenderbuffers(<span class="number">1</span>, &amp;_colorRenderBuffer);</span><br><span class="line">    glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);</span><br><span class="line">    <span class="comment">//为color分配存储空间</span></span><br><span class="line">    [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) setupFrameBuffer&#123;</span><br><span class="line">    glGenRenderbuffers(<span class="number">1</span>, &amp;_frameBuffer);</span><br><span class="line">    <span class="comment">//设置为当前 framebuffer</span></span><br><span class="line">    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);</span><br><span class="line">    <span class="comment">//将 _colorRenderBuffer 装配到 GL_COLOR_ATTACHMENT0 这个装配点上</span></span><br><span class="line">    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,</span><br><span class="line">                              GL_RENDERBUFFER, _colorRenderBuffer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) render&#123;</span><br><span class="line">    glClearColor(<span class="number">0.2</span>, <span class="number">0.3</span>, <span class="number">0.3</span>, <span class="number">1.0</span>);</span><br><span class="line">    glClear(GL_COLOR_BUFFER_BIT);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Setup viewport</span></span><br><span class="line">    glViewport(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">self</span>.frame.size.width, <span class="keyword">self</span>.frame.size.height);</span><br><span class="line">    <span class="comment">// bind Texture</span></span><br><span class="line">    glActiveTexture(GL_TEXTURE0);</span><br><span class="line">    glBindTexture(GL_TEXTURE_2D, _texture);</span><br><span class="line"></span><br><span class="line">    glUseProgram(_programHandle);</span><br><span class="line">    glBindVertexArrayOES(_VAO);</span><br><span class="line">    glUniform1i(glGetUniformLocation(_programHandle, <span class="string">"ourTexture"</span>), <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Draw triangle</span></span><br><span class="line">    glDrawElements(GL_TRIANGLES, <span class="number">6</span>, GL_UNSIGNED_INT, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    [_context presentRenderbuffer:GL_RENDERBUFFER];</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="四-OpenGLES上需要注意的几点"><a href="#四-OpenGLES上需要注意的几点" class="headerlink" title="四. OpenGLES上需要注意的几点"></a>四. OpenGLES上需要注意的几点</h2><h4 id="1-纹理过滤设置错误导致黑屏"><a href="#1-纹理过滤设置错误导致黑屏" class="headerlink" title="1. 纹理过滤设置错误导致黑屏"></a>1. 纹理过滤设置错误导致黑屏</h4><p>OpenglES中一定要注意，<code>GL_CLAMP_TO_EDGE</code>,否则就是黑屏</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//set the texture wrapping parameters</span></span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);</span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);</span><br><span class="line"><span class="comment">//set the texture filtering parameters</span></span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);</span><br><span class="line">glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</span><br></pre></td></tr></table></figure>
+<h4 id="2-减少drawArray"><a href="#2-减少drawArray" class="headerlink" title="2. 减少drawArray"></a>2. 减少drawArray</h4><p>GPUImageView中会有多次drawArray的问题，播放上屏建议自己做</p>
+<h2 id="demo下载"><a href="#demo下载" class="headerlink" title="demo下载"></a>demo下载</h2><ol>
+<li><a href="https://github.com/xcysuccess/OpenGLES" target="_blank" rel="external">OpenGLES</a></li>
+<li><a href="https://github.com/xcysuccess/LearnOpenGLNote" target="_blank" rel="external">OpenGL Mac</a></li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://learnopengl-cn.github.io/intro/" target="_blank" rel="external">learnopengl-cn</a>    </li>
+<li><a href="http://www.photoneray.com/opengl-vao-vbo/" target="_blank" rel="external">VAO 与 VBO 的前世今生</a></li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2017-09-29-OpenGLES之基础篇.html" data-title="OpenGLES基础篇 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/blog/2017-08-09-从零了解H264结构.html"  title="从零了解H264结构">
+ <strong>下一篇：</strong><br/> 
+ <span>从零了解H264结构
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-概念"><span class="toc-number">2.</span> <span class="toc-text">一. 概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-基础"><span class="toc-number">2.0.1.</span> <span class="toc-text">1. 基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-图形渲染管线"><span class="toc-number">2.0.2.</span> <span class="toc-text">2. 图形渲染管线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-对象"><span class="toc-number">2.0.3.</span> <span class="toc-text">3. 对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-纹理"><span class="toc-number">2.0.4.</span> <span class="toc-text">4. 纹理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-坐标系统"><span class="toc-number">2.0.5.</span> <span class="toc-text">4.坐标系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-摄像机"><span class="toc-number">2.0.6.</span> <span class="toc-text">5. 摄像机</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-理解"><span class="toc-number">3.</span> <span class="toc-text">二. 理解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-脑图总结"><span class="toc-number">3.0.1.</span> <span class="toc-text">1. 脑图总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-VAO-VBO-EBO到底是什么？"><span class="toc-number">3.0.2.</span> <span class="toc-text">2. VAO/VBO/EBO到底是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-VBO"><span class="toc-number">3.0.2.1.</span> <span class="toc-text">1. VBO</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-VAO"><span class="toc-number">3.0.2.2.</span> <span class="toc-text">2. VAO</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-EBO"><span class="toc-number">3.0.2.3.</span> <span class="toc-text">3. EBO</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-结论"><span class="toc-number">3.0.2.4.</span> <span class="toc-text">4. 结论</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-实战"><span class="toc-number">4.</span> <span class="toc-text">三. 实战</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-OpenGLES上需要注意的几点"><span class="toc-number">5.</span> <span class="toc-text">四. OpenGLES上需要注意的几点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-纹理过滤设置错误导致黑屏"><span class="toc-number">5.0.1.</span> <span class="toc-text">1. 纹理过滤设置错误导致黑屏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-减少drawArray"><span class="toc-number">5.0.2.</span> <span class="toc-text">2. 减少drawArray</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#demo下载"><span class="toc-number">6.</span> <span class="toc-text">demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">7.</span> <span class="toc-text">参考资料</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

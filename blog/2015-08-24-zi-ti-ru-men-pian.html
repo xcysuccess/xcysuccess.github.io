@@ -1,0 +1,535 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>字体入门篇 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="字体,入门,coretext,font">
+    <meta name="description" content="曾工作于wps负责ios版的文字排版，对文字的乱七八糟的编码常常感到绝望，感谢前人的文章和积累，这里做一下字体相关的总结。适合入门级的学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字体入门篇">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2015-08-24-zi-ti-ru-men-pian.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="曾工作于wps负责ios版的文字排版，对文字的乱七八糟的编码常常感到绝望，感谢前人的文章和积累，这里做一下字体相关的总结。适合入门级的学习。">
+<meta property="og:image" content="http://www.iosxxx.com/images/font/asciifull.gif">
+<meta property="og:image" content="http://www.iosxxx.com/images/font/utf8.png">
+<meta property="og:updated_time" content="2016-06-02T14:19:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="字体入门篇">
+<meta name="twitter:description" content="曾工作于wps负责ios版的文字排版，对文字的乱七八糟的编码常常感到绝望，感谢前人的文章和积累，这里做一下字体相关的总结。适合入门级的学习。">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/font/asciifull.gif">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2015-08-24-zi-ti-ru-men-pian.html" title="字体入门篇" itemprop="url">字体入门篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-24T08:00:19.000Z" itemprop="datePublished"> 发表于 2015-08-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-ASCII"><span class="toc-number">1.</span> <span class="toc-text">一. ASCII</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-背景"><span class="toc-number">1.1.</span> <span class="toc-text">1. 背景:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对照表"><span class="toc-number">1.2.</span> <span class="toc-text">2. 对照表:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-UNICODE"><span class="toc-number">2.</span> <span class="toc-text">二. UNICODE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-背景-为什么需要unicode"><span class="toc-number">2.1.</span> <span class="toc-text">1. 背景:为什么需要unicode?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-概念"><span class="toc-number">2.2.</span> <span class="toc-text">2. 概念:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-核心逻辑"><span class="toc-number">2.3.</span> <span class="toc-text">3. 核心逻辑:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-UTF8"><span class="toc-number">3.</span> <span class="toc-text">三. UTF8</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-背景-1"><span class="toc-number">3.1.</span> <span class="toc-text">1. 背景:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-概念-1"><span class="toc-number">3.2.</span> <span class="toc-text">2. 概念:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-核心"><span class="toc-number">3.3.</span> <span class="toc-text">3. 核心:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-其他探讨"><span class="toc-number">4.</span> <span class="toc-text">四. 其他探讨</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-big-endian和little-endian"><span class="toc-number">4.1.</span> <span class="toc-text">1. big endian和little endian</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-推荐一个查unicode码的网站"><span class="toc-number">4.2.</span> <span class="toc-text">2. 推荐一个查unicode码的网站</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">5.</span> <span class="toc-text">参考文献:</span></a></li></ol>
+		
+		</div>
+		
+		<p>建议大家先阅读一下<a href="http://blog.sina.com.cn/s/blog_6966650401013e9q.html" target="_blank" rel="external">字符编码详解及由来</a><br>好了，是不是感觉头脑里即清晰又模糊,ok,接下来我们对<code>ASCII</code>,<code>UNICODE</code>,<code>UTF8</code>来做一下解释</p>
+<h2 id="一-ASCII"><a href="#一-ASCII" class="headerlink" title="一. ASCII"></a>一. ASCII</h2><h3 id="1-背景"><a href="#1-背景" class="headerlink" title="1. 背景:"></a>1. 背景:</h3><p>我们知道，在计算机内部，所有的信息最终都表示为一个二进制的字符串。每一个二进制位（bit）有0和1两种状态，因此八个二进制位就可以组合出256种状态，这被称为一个字节（byte）。也就是说，一个字节一共可以用来表示256种不同的状态，每一个状态对应一个符号，就是256个符号，从0000000到11111111。<br>上个世纪60年代，美国制定了一套字符编码，对英语字符与二进制位之间的关系，做了统一规定。这被称为ASCII码，一直沿用至今。<br>ASCII码一共规定了128个字符的编码，比如空格”SPACE”是32（二进制00100000），大写的字母A是65（二进制01000001）。这128个符号（包括32个不能打印出来的控制符号），只占用了一个字节的后面7位，最前面的1位统一规定为0。</p>
+<h3 id="2-对照表"><a href="#2-对照表" class="headerlink" title="2. 对照表:"></a>2. 对照表:</h3><p><img src="/images/font/asciifull.gif" alt="image"><br><a id="more"></a></p>
+<h2 id="二-UNICODE"><a href="#二-UNICODE" class="headerlink" title="二. UNICODE"></a>二. UNICODE</h2><h3 id="1-背景-为什么需要unicode"><a href="#1-背景-为什么需要unicode" class="headerlink" title="1. 背景:为什么需要unicode?"></a>1. 背景:为什么需要unicode?</h3><p>英语用128个符号编码就够了，但是用来表示其他语言，128个符号是不够的。比如，在法语中，字母上方有注音符号，它就无法用ASCII码表示。于是，一些欧洲国家就决定，利用字节中闲置的最高位编入新的符号。比如，法语中的é的编码为130（二进制10000010）。这样一来，这些欧洲国家使用的编码体系，可以表示最多256个符号。<br>但是，这里又出现了新的问题。不同的国家有不同的字母，因此，哪怕它们都使用256个符号的编码方式，代表的字母却不一样。比如，130在法语编码中代表了é，在希伯来语编码中却代表了字母Gimel (ג)，在俄语编码中又会代表另一个符号。但是不管怎样，所有这些编码方式中，0–127表示的符号是一样的，不一样的只是128–255的这一段。<br>至于亚洲国家的文字，使用的符号就更多了，汉字就多达10万左右。一个字节只能表示256种符号，肯定是不够的，就必须使用多个字节表达一个符号。比如，简体中文常见的编码方式是GB2312，使用两个字节表示一个汉字，所以理论上最多可以表示256x256=65536个符号。  </p>
+<h3 id="2-概念"><a href="#2-概念" class="headerlink" title="2. 概念:"></a>2. 概念:</h3><p>一种统一规范的编码，将世界上所有的符号都纳入其中，防止其各个国家进行不同的扩展，出现类似gbk这种。每一个符号都给予一个独一无二的编码，那么乱码问题就会消失。这就是Unicode，就像它的名字都表示的，这是一种所有符号的编码。<br>目前实际应用的统一码版本对应于UCS-2，使用16位的编码空间。也就是每个字符占用2个字节。这样理论上一共最多可以表示216（即65536）个字符。基本满足各种语言的使用。实际上当前版本的统一码并未完全使用这16位编码，而是保留了大量空间以作为特殊使用或将来扩展。</p>
+<h3 id="3-核心逻辑"><a href="#3-核心逻辑" class="headerlink" title="3. 核心逻辑:"></a>3. 核心逻辑:</h3><p>Unicode当然是一个很大的集合，现在的规模可以容纳100多万个符号。每个符号的编码都不一样，比如，U+0639表示阿拉伯字母Ain，U+0041表示英语的大写字母A，U+4E25表示汉字”严”。具体的符号对应表，可以查询<a href="http://www.unicode.org/charts/" target="_blank" rel="external">unicode.org</a>，或者专门的汉字对应表。  </p>
+<h2 id="三-UTF8"><a href="#三-UTF8" class="headerlink" title="三. UTF8"></a>三. UTF8</h2><h3 id="1-背景-1"><a href="#1-背景-1" class="headerlink" title="1. 背景:"></a>1. 背景:</h3><p>外国人使用的大部分是英文，这样的话只需要一个字节，国人使用的是中文，中文是双字节。如果统一用unicode会造成资源的浪费。UTF-8就是在互联网上使用最广的一种Unicode的实现方式。<strong>UTF-8是Unicode的实现方式之一</strong></p>
+<h3 id="2-概念-1"><a href="#2-概念-1" class="headerlink" title="2. 概念:"></a>2. 概念:</h3><p>UTF-8编码是Unicode字符集的一种编码方式，其特点是使用变长字节数来存储数据。<strong>1到4个byte</strong></p>
+<h3 id="3-核心"><a href="#3-核心" class="headerlink" title="3. 核心:"></a>3. 核心:</h3><p><img src="/images/font/utf8.png" alt="image">    </p>
+<pre><code>单字节可编码的Unicode范围：\u0000~\u007F（0~127）
+双字节可编码的Unicode范围：\u0080~\u07FF（128~2047）
+三字节可编码的Unicode范围：\u0800~\uFFFF（2048~65535）
+四字节可编码的Unicode范围：\u10000~\u1FFFFF（65536~2097151）
+</code></pre><p>在ASCII码的范围，用一个字节表示，超出ASCII码的范围就用字节表示，这就形成了我们上面看到的UTF-8的表示方法，这様的好处是当UNICODE文件中只有ASCII码时，存储的文件都为一个字节，所以就是普通的ASCII文件无异，读取的时候也是如此，所以能与以前的ASCII文件兼容。<br>大于ASCII码的，就会由上面的第一字节的前几位表示该unicode字元的长度，比如110xxxxxx前三位的二进制表示告诉我们这是个2BYTE的UNICODE字元；1110xxxx是个三位的UNICODE字元，依此类推；xxx的位置由字符编码数的二进制表示的位填入。越靠右的x具有越少的特殊意义。只用最短的那个足够表达一个字符编码数的多字节串。注意在多字节串中，第一个字节的开头”1”的数目就是整个串中字节的数目。</p>
+<h2 id="四-其他探讨"><a href="#四-其他探讨" class="headerlink" title="四. 其他探讨"></a>四. 其他探讨</h2><h3 id="1-big-endian和little-endian"><a href="#1-big-endian和little-endian" class="headerlink" title="1. big endian和little endian"></a>1. big endian和little endian</h3><p>big endian和little endian是CPU处理多字节数的不同方式。例如“汉”字的Unicode编码是6C49。那么写到文件里时，究竟是将6C写在前面，还是将49写在前面？如果将6C写在前面，就是big endian。如果将49写在前面，就是little endian。<br>“endian”这个词出自《格列佛游记》。小人国的内战就源于吃鸡蛋时是究竟从大头(Big-Endian)敲开还是从小头(Little-Endian)敲开，由此曾发生过六次叛乱，一个皇帝送了命，另一个丢了王位。<br>我们一般将endian翻译成“字节序”，将big endian和little endian称作“大尾”和“小尾”。   </p>
+<h3 id="2-推荐一个查unicode码的网站"><a href="#2-推荐一个查unicode码的网站" class="headerlink" title="2. 推荐一个查unicode码的网站"></a>2. 推荐一个查unicode码的网站</h3><p><a href="http://www.unicode.org/charts/" target="_blank" rel="external">unicode的chart对照表</a>,里面记录了每个字符的对应的unicode码,如果这里查不到可以去<a href="http://en.wikibooks.org/wiki/Unicode/Character_reference/2000-2FFF" target="_blank" rel="external">unicode的维基百科</a></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献:"></a>参考文献:</h2><p>1.<a href="https://zh.wikipedia.org/wiki/ASCII" target="_blank" rel="external">维基百科 ASCII</a><br>2.<a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="external">维基百科 UTF-8</a><br>3.<a href="https://zh.wikipedia.org/wiki/UTF-16" target="_blank" rel="external">维基百科 UTF-16</a><br>4.<a href="https://zh.wikipedia.org/wiki/Unicode" target="_blank" rel="external">维基百科 Unicode</a><br>5.<a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="external">字符编码笔记：ASCII，Unicode和UTF-8</a><br>6.<a href="http://www.guokr.com/blog/83367/" target="_blank" rel="external">为什么UTF-8没有字节序问题？</a><br>7.<a href="http://www.fmddlmyy.cn/text6.html" target="_blank" rel="external">谈谈Unicode编码，简要解释UCS、UTF、BMP、BOM等名词</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/other/">other</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2015-08-24-zi-ti-ru-men-pian.html" data-title="字体入门篇 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2015-08-29-iosyi-chang-bu-huo.html" title="iOS异常捕获">
+  <strong>上一篇：</strong><br/>
+  <span>
+  iOS异常捕获</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2015-08-02-li-yong-swizzleda-zao-qie-huan-zhu-ti-de-bian-se-ji-zhu.html"  title="利用swizzle打造切换主题的变色技术">
+ <strong>下一篇：</strong><br/> 
+ <span>利用swizzle打造切换主题的变色技术
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-ASCII"><span class="toc-number">1.</span> <span class="toc-text">一. ASCII</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-背景"><span class="toc-number">1.1.</span> <span class="toc-text">1. 背景:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-对照表"><span class="toc-number">1.2.</span> <span class="toc-text">2. 对照表:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-UNICODE"><span class="toc-number">2.</span> <span class="toc-text">二. UNICODE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-背景-为什么需要unicode"><span class="toc-number">2.1.</span> <span class="toc-text">1. 背景:为什么需要unicode?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-概念"><span class="toc-number">2.2.</span> <span class="toc-text">2. 概念:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-核心逻辑"><span class="toc-number">2.3.</span> <span class="toc-text">3. 核心逻辑:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-UTF8"><span class="toc-number">3.</span> <span class="toc-text">三. UTF8</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-背景-1"><span class="toc-number">3.1.</span> <span class="toc-text">1. 背景:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-概念-1"><span class="toc-number">3.2.</span> <span class="toc-text">2. 概念:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-核心"><span class="toc-number">3.3.</span> <span class="toc-text">3. 核心:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-其他探讨"><span class="toc-number">4.</span> <span class="toc-text">四. 其他探讨</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-big-endian和little-endian"><span class="toc-number">4.1.</span> <span class="toc-text">1. big endian和little endian</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-推荐一个查unicode码的网站"><span class="toc-number">4.2.</span> <span class="toc-text">2. 推荐一个查unicode码的网站</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文献"><span class="toc-number">5.</span> <span class="toc-text">参考文献:</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

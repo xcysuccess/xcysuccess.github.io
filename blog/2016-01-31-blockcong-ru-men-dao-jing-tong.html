@@ -1,0 +1,667 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Block那些事 | 向晨宇的技术博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="向晨宇">
+    
+
+    <meta name="keywords" content="block">
+    <meta name="description" content="这里讨论了从Block的基本用法，实战应用，以及最后的测试案例，供大家学习参考">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Block那些事">
+<meta property="og:url" content="http://www.iosxxx.com/blog/2016-01-31-blockcong-ru-men-dao-jing-tong.html">
+<meta property="og:site_name" content="向晨宇的技术博客">
+<meta property="og:description" content="这里讨论了从Block的基本用法，实战应用，以及最后的测试案例，供大家学习参考">
+<meta property="og:image" content="http://www.iosxxx.com/images/block/1.png">
+<meta property="og:image" content="http://www.iosxxx.com/images/block/2.png">
+<meta property="og:image" content="http://www.iosxxx.com/images/block/3.png">
+<meta property="og:image" content="http://www.iosxxx.com/images/block/4.png">
+<meta property="og:updated_time" content="2016-06-02T14:20:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Block那些事">
+<meta name="twitter:description" content="这里讨论了从Block的基本用法，实战应用，以及最后的测试案例，供大家学习参考">
+<meta name="twitter:image" content="http://www.iosxxx.com/images/block/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="向晨宇的技术博客" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.png">
+    
+    
+    <link rel="apple-touch-icon" href="/img/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="向晨宇的技术博客">向晨宇的技术博客</a></h1>
+				<h2 class="blog-motto">做人做事,只有偏执到癫狂,才能达到顶峰</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives/">所有文章</a></li>
+					
+						<li><a href="/index/">索引</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.iosxxx.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/blog/2016-01-31-blockcong-ru-men-dao-jing-tong.html" title="Block那些事" itemprop="url">Block那些事</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="向晨宇" target="_blank" itemprop="author">向晨宇</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-31T13:53:03.000Z" itemprop="datePublished"> 发表于 2016-01-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-Block入门"><span class="toc-number">1.</span> <span class="toc-text">一. Block入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-概念"><span class="toc-number">1.1.</span> <span class="toc-text">1.概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-基本的用法"><span class="toc-number">1.2.</span> <span class="toc-text">2.基本的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-内存的5个区"><span class="toc-number">1.3.</span> <span class="toc-text">3.内存的5个区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-使用场景"><span class="toc-number">1.4.</span> <span class="toc-text">4.使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-Block原理"><span class="toc-number">2.</span> <span class="toc-text">二. Block原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Block的三种类型"><span class="toc-number">2.1.</span> <span class="toc-text">1.Block的三种类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-类型判断"><span class="toc-number">2.2.</span> <span class="toc-text">2.类型判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-循环引用"><span class="toc-number">2.3.</span> <span class="toc-text">3.循环引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-block原理"><span class="toc-number">2.4.</span> <span class="toc-text">4.__block原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-利用Block如何实现一对多的"><span class="toc-number">3.</span> <span class="toc-text">三. 利用Block如何实现一对多的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-一种是直接Block"><span class="toc-number">3.1.</span> <span class="toc-text">1.一种是直接Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-利用对象做Block"><span class="toc-number">3.2.</span> <span class="toc-text">2.利用对象做Block</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Delegate、Notification、Block"><span class="toc-number">4.</span> <span class="toc-text">四. Delegate、Notification、Block</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-优缺点"><span class="toc-number">4.1.</span> <span class="toc-text">1.优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-个人见解"><span class="toc-number">4.2.</span> <span class="toc-text">2.个人见解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-测试"><span class="toc-number">5.</span> <span class="toc-text">五. 测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-测试一"><span class="toc-number">5.1.</span> <span class="toc-text">1.测试一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-测试二"><span class="toc-number">5.2.</span> <span class="toc-text">2.测试二</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-Demo下载"><span class="toc-number">6.</span> <span class="toc-text">六. Demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七-参考资料"><span class="toc-number">7.</span> <span class="toc-text">七. 参考资料</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="一-Block入门"><a href="#一-Block入门" class="headerlink" title="一. Block入门"></a>一. Block入门</h2><h3 id="1-概念"><a href="#1-概念" class="headerlink" title="1.概念"></a>1.概念</h3><p>Block是iOS4.0+ 和Mac OS X 10.6+ 引进的对C语言的扩展，用来实现匿名函数的特性<br>闭包是一个能够访问其他函数内部变量的函数.  </p>
+<h3 id="2-基本的用法"><a href="#2-基本的用法" class="headerlink" title="2.基本的用法"></a>2.基本的用法</h3><p><img src="/images/block/1.png" alt="&quot;Block语法&quot;">  </p>
+<p>每次写block都很绕，语法很麻烦。好吧，再此记录一下。  </p>
+<p><strong>1.作为方法时</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span> )testGlobalBlock:(<span class="built_in">NSString</span>*) url</span><br><span class="line">          success:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))success</span><br><span class="line">          failure:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))failure;</span><br></pre></td></tr></table></figure>
+<p><strong>2.作为成员变量进行声明时</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (^SUCCESSBLOCK)(<span class="built_in">BOOL</span> isSuccess);</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (^FAILEDBLOCK)(<span class="built_in">BOOL</span> isSuccess);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXEngine</span>()</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>) SUCCESSBLOCK successBlock;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>) FAILEDBLOCK failedBlock;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p><strong>3.写在函数内部</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> (^_block)() = ^&#123;</span><br><span class="line">       _a = <span class="number">10</span>;</span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="3-内存的5个区"><a href="#3-内存的5个区" class="headerlink" title="3.内存的5个区"></a>3.内存的5个区</h3><p>这里先普及一个基本的5个概念，内存的5个区。否则在具体讲堆栈的时候怕大家会不理解。  </p>
+<table>
+<thead>
+<tr>
+<th>作用</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>栈区（stack）</td>
+<td>由编译器自动分配释放，存放函数的参数值，局部变量的值等</td>
+</tr>
+<tr>
+<td>堆区（heap）</td>
+<td>一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收</td>
+</tr>
+<tr>
+<td>全局区（静态区）（static）</td>
+<td>全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域，未初始化的全局变量和未初始化的静态变量在相邻的另一块区域。程序结束后由系统释放</td>
+</tr>
+<tr>
+<td>文字常量区</td>
+<td>常量字符串就是放在这里的。程序结束后由系统释放</td>
+</tr>
+<tr>
+<td>程序代码区</td>
+<td>存放函数体的二进制代码</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>  
+<h3 id="4-使用场景"><a href="#4-使用场景" class="headerlink" title="4.使用场景"></a>4.使用场景</h3><ol>
+<li>任务完成时回调处理</li>
+<li>消息监听回调处理</li>
+<li>错误回调处理</li>
+<li>枚举回调</li>
+<li>视图动画、变换</li>
+<li>排序</li>
+</ol>
+<h2 id="二-Block原理"><a href="#二-Block原理" class="headerlink" title="二. Block原理"></a>二. Block原理</h2><h3 id="1-Block的三种类型"><a href="#1-Block的三种类型" class="headerlink" title="1.Block的三种类型"></a>1.Block的三种类型</h3><table>
+<thead>
+<tr>
+<th>作用</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NSConcreteGlobalBlock</td>
+<td>全局静态，不访问外部变量的时候就是NSConcreteGlobalBlock</td>
+</tr>
+<tr>
+<td>NSConcreteStackBlock</td>
+<td>保存在栈中，出花括号会被销毁</td>
+</tr>
+<tr>
+<td>NSConcreteMallocBlock</td>
+<td>保存在堆中的block,当引用计数为0的时候会被销毁</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-类型判断"><a href="#2-类型判断" class="headerlink" title="2.类型判断"></a>2.类型判断</h3><p>如何判断在哪个区,我们分ARC和MRC两种情况</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">void</span> (^block)() = ^&#123;printf(<span class="string">"%d"</span>,i);&#125; ;</span><br><span class="line">__<span class="keyword">weak</span> <span class="keyword">void</span> (^weakBlock)() = ^&#123;printf(<span class="string">"%d"</span>,i);&#125;; <span class="comment">//被weak修饰之后还是stack</span></span><br><span class="line"><span class="keyword">void</span> (^globalStack)() = ^&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, ^&#123;printf(<span class="string">"%d"</span>,i);&#125;);</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, block);</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, weakBlock);</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, globalStack);</span><br></pre></td></tr></table></figure>
+<p><strong>1.ARC下</strong><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSStackBlock__: <span class="number">0x7fff54c9fbc8</span>&gt;</span><br><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSMallocBlock__: <span class="number">0x7fdaaae161c0</span>&gt;</span><br><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSStackBlock__: <span class="number">0x7fff54c9fbf8</span>&gt;</span><br><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSGlobalBlock__: <span class="number">0x10af60230</span>&gt;</span><br></pre></td></tr></table></figure></p>
+<p><strong>2.MRC下</strong><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSStackBlock__: <span class="number">0x7fff54c9fba0</span>&gt;</span><br><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSStackBlock__: <span class="number">0x7fff54c9fc00</span>&gt;</span><br><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSStackBlock__: <span class="number">0x7fff54c9fbd0</span>&gt;</span><br><span class="line">testARC[<span class="number">76639</span>:<span class="number">507728</span>] &lt;__NSGlobalBlock__: <span class="number">0x10af60130</span>&gt;</span><br></pre></td></tr></table></figure></p>
+<p><strong>3.判断原则</strong>  </p>
+<p><strong>1.ARC下判断原则</strong><br><img src="/images/block/2.png" alt="&quot;Block语法&quot;">  </p>
+<p><strong>2.MRC下判断原则</strong><br><img src="/images/block/3.png" alt="&quot;Block语法&quot;">  </p>
+<p><strong>3.ARC与MRC区别</strong><br>ARC引用外部对象会自动copy，MRC则不会。所以MRC要将栈对象变成堆对象只要执行一次copy即可。</p>
+<h3 id="3-循环引用"><a href="#3-循环引用" class="headerlink" title="3.循环引用"></a>3.循环引用</h3><p><strong>1.造成循环引用的实例</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Person</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">int</span> _a;</span><br><span class="line">    <span class="keyword">void</span> (^_block)();</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)test</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">void</span> (^_block)() = ^&#123;</span><br><span class="line">        _a = <span class="number">10</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>此时_a在用clang编译后可以很明显看到有会self的身影，所以此时我们可以将其理解成self.a（便于记忆),此时Person持有block,block持有self，造成了循环引用  </p>
+<p><strong>2. 解决方式</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)test</span><br><span class="line">&#123;</span><br><span class="line">  __<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</span><br><span class="line">  <span class="keyword">void</span> (^_block)() = ^&#123;</span><br><span class="line">        weakSelf-&gt;a = <span class="number">10</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3.系统Block</strong>  </p>
+<p><strong>1.经验谈之GCD/UIView的系统动画的Block中，为何可以写self？</strong><br>因为self并没有对其进行持有，循环引用的原理是两个对象之间相互有持有关系，现在仅仅是GCD持有self，但是self并没有持有GCD，所以是没有问题的。（当GCD对象为其成员变量时才具有持有的关系）</p>
+<h3 id="4-block原理"><a href="#4-block原理" class="headerlink" title="4.__block原理"></a>4.__block原理</h3><p><strong>1.我们先看如下代码</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> test()</span><br><span class="line">&#123;</span><br><span class="line">    __block <span class="keyword">int</span> a;</span><br><span class="line">    ^&#123;</span><br><span class="line">        a = <span class="number">10</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2.用<code>clang -re-write testBlock.c</code>命令后</strong>  </p>
+<p>看关键代码如下:  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> __Block_byref_a_0 &#123;</span><br><span class="line">  <span class="keyword">void</span> *__isa;</span><br><span class="line">__Block_byref_a_0 *__forwarding;</span><br><span class="line"> <span class="keyword">int</span> __flags;</span><br><span class="line"> <span class="keyword">int</span> __size;</span><br><span class="line"> <span class="keyword">int</span> a;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> __test_block_impl_0 &#123;</span><br><span class="line">  <span class="keyword">struct</span> __block_impl impl;</span><br><span class="line">  <span class="keyword">struct</span> __test_block_desc_0* Desc;</span><br><span class="line">  __Block_byref_a_0 *a; <span class="comment">// by ref</span></span><br><span class="line">  __test_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __test_block_desc_0 *desc, __Block_byref_a_0 *_a, <span class="keyword">int</span> flags=<span class="number">0</span>) : a(_a-&gt;__forwarding) &#123;</span><br><span class="line">    impl.isa = &amp;_NSConcreteStackBlock;</span><br><span class="line">    impl.Flags = flags;</span><br><span class="line">    impl.FuncPtr = fp;</span><br><span class="line">    Desc = desc;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __test_block_func_0(<span class="keyword">struct</span> __test_block_impl_0 *__cself) &#123;</span><br><span class="line">  __Block_byref_a_0 *a = __cself-&gt;a; <span class="comment">// bound by ref</span></span><br><span class="line"></span><br><span class="line">        (a-&gt;__forwarding-&gt;a) = <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __test_block_copy_0(<span class="keyword">struct</span> __test_block_impl_0*dst, <span class="keyword">struct</span> __test_block_impl_0*src) &#123;_Block_object_assign((<span class="keyword">void</span>*)&amp;dst-&gt;a, (<span class="keyword">void</span>*)src-&gt;a, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __test_block_dispose_0(<span class="keyword">struct</span> __test_block_impl_0*src) &#123;_Block_object_dispose((<span class="keyword">void</span>*)src-&gt;a, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">struct</span> __test_block_desc_0 &#123;</span><br><span class="line">  size_t reserved;</span><br><span class="line">  size_t Block_size;</span><br><span class="line">  <span class="keyword">void</span> (*<span class="keyword">copy</span>)(<span class="keyword">struct</span> __test_block_impl_0*, <span class="keyword">struct</span> __test_block_impl_0*);</span><br><span class="line">  <span class="keyword">void</span> (*dispose)(<span class="keyword">struct</span> __test_block_impl_0*);</span><br><span class="line">&#125; __test_block_desc_0_DATA = &#123; <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __test_block_impl_0), __test_block_copy_0, __test_block_dispose_0&#125;;</span><br><span class="line"><span class="keyword">void</span> test()</span><br><span class="line">&#123;</span><br><span class="line">    __attribute__((__blocks__(<span class="keyword">byref</span>))) __Block_byref_a_0 a = &#123;(<span class="keyword">void</span>*)<span class="number">0</span>,(__Block_byref_a_0 *)&amp;a, <span class="number">0</span>, <span class="keyword">sizeof</span>(__Block_byref_a_0)&#125;;</span><br><span class="line">;</span><br><span class="line">    ((<span class="keyword">void</span> (*)())&amp;__test_block_impl_0((<span class="keyword">void</span> *)__test_block_func_0, &amp;__test_block_desc_0_DATA, (__Block_byref_a_0 *)&amp;a, <span class="number">570425344</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3.结论</strong>  </p>
+<p>我们观察<strong>Block_byref_a_0结构体，这个结构体中含有isa指针，所以也是一个对象，它是用来包装局部变量a的。当block被copy到堆中时，</strong>Person<strong>test_block_impl_0的拷贝辅助函数</strong>Person<strong>test_block_copy_0会将</strong>Block_byref_a_0拷贝至堆中，所以即使局部变量所在堆被销毁，block依然能对堆中的局部变量进行操作。其中<strong>Block_byref_a_0成员指针</strong>forwarding用来指向它在堆中的拷贝</p>
+<h2 id="三-利用Block如何实现一对多的"><a href="#三-利用Block如何实现一对多的" class="headerlink" title="三. 利用Block如何实现一对多的"></a>三. 利用Block如何实现一对多的</h2><h3 id="1-一种是直接Block"><a href="#1-一种是直接Block" class="headerlink" title="1.一种是直接Block"></a>1.一种是直接Block</h3><p>这里我直接copy一段<code>AFNetworking</code>的代码，这个库写的太好了，大家有空可以参考一下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSURLSessionDataTask</span> *)dataTaskWithHTTPMethod:(<span class="built_in">NSString</span> *)method</span><br><span class="line">                                      URLString:(<span class="built_in">NSString</span> *)URLString</span><br><span class="line">                                     parameters:(<span class="keyword">id</span>)parameters</span><br><span class="line">                                 uploadProgress:(nullable <span class="keyword">void</span> (^)(<span class="built_in">NSProgress</span> *uploadProgress)) uploadProgress</span><br><span class="line">                               downloadProgress:(nullable <span class="keyword">void</span> (^)(<span class="built_in">NSProgress</span> *downloadProgress)) downloadProgress</span><br><span class="line">                                        success:(<span class="keyword">void</span> (^)(<span class="built_in">NSURLSessionDataTask</span> *, <span class="keyword">id</span>))success</span><br><span class="line">                                        failure:(<span class="keyword">void</span> (^)(<span class="built_in">NSURLSessionDataTask</span> *, <span class="built_in">NSError</span> *))failure</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *serializationError = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSMutableURLRequest</span> *request = [<span class="keyword">self</span>.requestSerializer requestWithMethod:method URLString:[[<span class="built_in">NSURL</span> URLWithString:URLString relativeToURL:<span class="keyword">self</span>.baseURL] absoluteString] parameters:parameters error:&amp;serializationError];</span><br><span class="line">    <span class="keyword">if</span> (serializationError) &#123;</span><br><span class="line">        <span class="keyword">if</span> (failure) &#123;</span><br><span class="line">	<span class="meta">#pragma clang diagnostic push</span></span><br><span class="line">	<span class="meta">#pragma clang diagnostic ignored <span class="meta-string">"-Wgnu"</span></span></span><br><span class="line">            <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.completionQueue ?: dispatch_get_main_queue(), 			  ^&#123;</span><br><span class="line">                failure(<span class="literal">nil</span>, serializationError);</span><br><span class="line">            &#125;);</span><br><span class="line">	<span class="meta">#pragma clang diagnostic pop</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    __block <span class="built_in">NSURLSessionDataTask</span> *dataTask = <span class="literal">nil</span>;</span><br><span class="line">    dataTask = [<span class="keyword">self</span> dataTaskWithRequest:request</span><br><span class="line">                          uploadProgress:uploadProgress</span><br><span class="line">                        downloadProgress:downloadProgress</span><br><span class="line">                       completionHandler:^(<span class="built_in">NSURLResponse</span> * __unused response, <span class="keyword">id</span> responseObject, <span class="built_in">NSError</span> *error) &#123;</span><br><span class="line">        <span class="keyword">if</span> (error) &#123;</span><br><span class="line">            <span class="keyword">if</span> (failure) &#123;</span><br><span class="line">                failure(dataTask, error);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (success) &#123;</span><br><span class="line">                success(dataTask, responseObject);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dataTask;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-利用对象做Block"><a href="#2-利用对象做Block" class="headerlink" title="2.利用对象做Block"></a>2.利用对象做Block</h3><p><img src="/images/block/4.png" alt="&quot;Block语法&quot;">  </p>
+<p>现在有<code>RequestObject</code>和<code>XXNetEngine</code>两个文件.  </p>
+<p><strong>1.RequestObject</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (^ReqSuccessBlock)(<span class="built_in">BOOL</span> isSuccess);</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (^FailedBlock)(<span class="built_in">BOOL</span> isSuccess);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">RequestObject</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>) ReqSuccessBlock successBlock;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>) FailedBlock failedBlock;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">NSInteger</span> CMD;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="built_in">NSInteger</span> seq;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p><strong>2.XXNetEngine</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"XXNetEngine.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"RequestObject.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXNetEngine</span>()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableDictionary</span> *requestDict;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXNetEngine</span></span></span><br><span class="line"></span><br><span class="line">-(instancetype)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">self</span> = [<span class="keyword">super</span> init])&#123;</span><br><span class="line">        <span class="keyword">self</span>.requestDict = [<span class="built_in">NSMutableDictionary</span> dictionary];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line">+(instancetype) sharedInstance</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> XXNetEngine* instance = <span class="literal">nil</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">        instance = [[XXNetEngine alloc] init];</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>)requestData:(RequestObject*) reqObject</span><br><span class="line">      successBlock:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))successBlock</span><br><span class="line">      failureBlock:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))failureBlock</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ( reqObject &amp;&amp; successBlock &amp;&amp; failureBlock ) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, <span class="number">0</span>), ^&#123;</span><br><span class="line">            <span class="comment">//requestSeq是一个随机数</span></span><br><span class="line">            <span class="keyword">int</span> requestSeq = arc4random() % <span class="number">100</span>;;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//网络操作</span></span><br><span class="line">            reqObject.successBlock = successBlock;</span><br><span class="line">            reqObject.failedBlock = failureBlock;</span><br><span class="line">            reqObject.seq = requestSeq;</span><br><span class="line">            </span><br><span class="line">            [<span class="keyword">self</span> addRequestItem:reqObject seq:requestSeq];</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//模拟一个2秒的网络操作</span></span><br><span class="line">            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">2</span> * <span class="built_in">NSEC_PER_SEC</span>)), dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                [<span class="keyword">self</span> didReceiveData:reqObject.seq];</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) didReceiveData:(<span class="built_in">NSInteger</span>) seq</span><br><span class="line">&#123;</span><br><span class="line">    RequestObject *request = [<span class="keyword">self</span> getRequestItem:seq];</span><br><span class="line">    <span class="keyword">if</span> ( request ) &#123;</span><br><span class="line">        [<span class="keyword">self</span> removeRequestItem:seq];</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">            <span class="keyword">if</span> ( <span class="literal">NULL</span> != request.successBlock ) &#123;</span><br><span class="line">                request.successBlock(<span class="literal">YES</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//用命令字做参数传递</span></span><br><span class="line">- (RequestObject *) getRequestItem:(<span class="built_in">NSInteger</span>)seq</span><br><span class="line">&#123;</span><br><span class="line">    RequestObject *request = <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">@synchronized</span>(<span class="keyword">self</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">NSNumber</span> *numSeq = [<span class="built_in">NSNumber</span> numberWithInteger:seq];</span><br><span class="line">        request = [<span class="keyword">self</span>.requestDict objectForKey:numSeq];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> request;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) addRequestItem:(RequestObject *)request seq:(<span class="built_in">NSInteger</span>)seq</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@synchronized</span>(<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ( request &amp;&amp; (<span class="number">0</span>!=seq) ) &#123;</span><br><span class="line">            <span class="built_in">NSNumber</span> *numSeq = [<span class="built_in">NSNumber</span> numberWithInteger:seq];</span><br><span class="line">            [<span class="keyword">self</span>.requestDict setObject:request forKey:numSeq];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>) removeRequestItem:(<span class="built_in">NSInteger</span>)seq</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@synchronized</span>(<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">NSNumber</span> *numSeq = [<span class="built_in">NSNumber</span> numberWithInteger:seq];</span><br><span class="line">        [<span class="keyword">self</span>.requestDict removeObjectForKey:numSeq];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p><strong>3.输出结果</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">59.824</span> testARC[<span class="number">1232</span>:<span class="number">45931</span>] XXNetEngine successBlock</span><br></pre></td></tr></table></figure>
+<h2 id="四-Delegate、Notification、Block"><a href="#四-Delegate、Notification、Block" class="headerlink" title="四. Delegate、Notification、Block"></a>四. Delegate、Notification、Block</h2><h3 id="1-优缺点"><a href="#1-优缺点" class="headerlink" title="1.优缺点"></a>1.优缺点</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Notification</td>
+<td>1.使用简单，代码精简。2.解决了同时向多个对象监听相应的问题。3.传值方便快捷，Context自身携带相应的内容。</td>
+<td>1.使用完毕后，要时刻记得注销通知，否则将出现不可预见的crash。2.key不够安全，编译器不会监测是否被通知中心正确处理。3.调试的时候动作的跟踪将很难进行。4.当使用者向通知中心发送通知的时候，并不能获得任何反馈信息。5.需要一个第三方的对象来做监听者与被监听者的中介。</td>
+</tr>
+<tr>
+<td>Delegate</td>
+<td>1.减少代码的耦合性，使事件监听和事件处理相分离。2.清晰的语法定义，减少维护成本，较强的代码可读性。3.不需要创建第三方来监听事件和传输数据。</td>
+<td>1.实现委托的代码过程比较繁琐。2.当实现跨层传值监听的时候将加大代码的耦合性，并且程序的层次结构将变的混乱。3.当对多个对象同时传值响应的时候，委托的易用性将大大降低。</td>
+</tr>
+<tr>
+<td>Block</td>
+<td>1.语法简洁，实现回调不需要显示的调用方法，代码更为紧凑。2.增强代码的可读性和可维护性。3.配合GCD优秀的解决多线程问题。</td>
+<td>1.Block中得代码将自动进行一次retain操作，容易造成内存泄露2.Block内默认引用为强引用，容易造成循环引用。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-个人见解"><a href="#2-个人见解" class="headerlink" title="2.个人见解"></a>2.个人见解</h3><p>如果方法过多，一般大于3个的时候，用delegate，因为此时用block，代码将很难维护。比如UITableViewDelegate等等UI组建，都是用的delegate。其他方式用block。<br>Notification能不用的时候尽量不用，缺点太多明显，增加调试难度。在工程大的情况下，极其难以维护。当然有些情况下也是必不可少的，比如观察者模式.</p>
+<h2 id="五-测试"><a href="#五-测试" class="headerlink" title="五. 测试"></a>五. 测试</h2><h3 id="1-测试一"><a href="#1-测试一" class="headerlink" title="1.测试一"></a>1.测试一</h3><p>快来看看大家现在对Block的理解吧<br><a href="http://blog.parse.com/learn/engineering/objective-c-blocks-quiz/" target="_blank" rel="external">Block测试题, 从唐巧大神博客看到的转载链接</a></p>
+<h3 id="2-测试二"><a href="#2-测试二" class="headerlink" title="2.测试二"></a>2.测试二</h3><p>现在ViewController中有一个XXEngine对象</p>
+<p><strong>1.XXEngine代码如下</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (^SUCCESSBLOCK)(<span class="built_in">BOOL</span> isSuccess);</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> (^FAILEDBLOCK)(<span class="built_in">BOOL</span> isSuccess);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">XXEngine</span>()</span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>) SUCCESSBLOCK successBlock;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>,<span class="keyword">copy</span>) FAILEDBLOCK failedBlock;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">XXEngine</span></span></span><br><span class="line"></span><br><span class="line">-(instancetype)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"XXEngine init"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>)dealloc</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"XXEngine dealloc"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span> )testGlobalBlock:(<span class="built_in">NSString</span>*) url</span><br><span class="line">           success:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))success</span><br><span class="line">           failure:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))failure</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//设置时间</span></span><br><span class="line">    <span class="keyword">double</span> delayInSeconds = <span class="number">2.0</span>;</span><br><span class="line">    dispatch_time_t delayInNanoSeconds =</span><br><span class="line">    dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * <span class="built_in">NSEC_PER_SEC</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</span><br><span class="line">    dispatch_after(delayInNanoSeconds, concurrentQueue, ^(<span class="keyword">void</span>)&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"网络操作完成"</span>);</span><br><span class="line">        <span class="keyword">if</span>(success)&#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,success);</span><br><span class="line">            success(<span class="literal">YES</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span> )testMallocBlock:(<span class="built_in">NSString</span>*) url</span><br><span class="line">                 success:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))success</span><br><span class="line">                 failure:(<span class="keyword">void</span> (^)(<span class="built_in">BOOL</span> isSuccess))failure</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span>.successBlock = success;</span><br><span class="line">    <span class="keyword">self</span>.failedBlock = failure;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//设置时间</span></span><br><span class="line">    <span class="keyword">double</span> delayInSeconds = <span class="number">2.0</span>;</span><br><span class="line">    dispatch_time_t delayInNanoSeconds =</span><br><span class="line">    dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * <span class="built_in">NSEC_PER_SEC</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</span><br><span class="line">    dispatch_after(delayInNanoSeconds, concurrentQueue, ^(<span class="keyword">void</span>)&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"网络操作完成"</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">self</span>.successBlock)&#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,<span class="keyword">self</span>.successBlock);</span><br><span class="line">            <span class="keyword">self</span>.successBlock(<span class="literal">YES</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2.我们在ViewController中做如下处理(1)</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">IBAction</span>)testXXEngine:(<span class="built_in">UIButton</span> *)sender &#123;</span><br><span class="line">    XXEngine *xxEngine = [[XXEngine alloc] init];</span><br><span class="line">    [xxEngine testGlobalBlock:<span class="literal">nil</span> success:^(<span class="built_in">BOOL</span> isSuccess) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2秒已到"</span>);</span><br><span class="line">    &#125; failure:^(<span class="built_in">BOOL</span> isSuccess) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2秒结束"</span>);</span><br><span class="line">    &#125;];</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>此时的输出结果大家能想到吗？这里公布答案：  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">10</span>:<span class="number">24.100</span> testARC[<span class="number">699</span>:<span class="number">16506</span>] XXEngine init</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">10</span>:<span class="number">24.101</span> testARC[<span class="number">699</span>:<span class="number">16506</span>] XXEngine dealloc</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">10</span>:<span class="number">26.101</span> testARC[<span class="number">699</span>:<span class="number">16615</span>] 网络操作完成</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">10</span>:<span class="number">26.102</span> testARC[<span class="number">699</span>:<span class="number">16615</span>] &lt;__NSGlobalBlock__: <span class="number">0x102bbd110</span>&gt;</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">10</span>:<span class="number">26.102</span> testARC[<span class="number">699</span>:<span class="number">16615</span>] <span class="number">2</span>秒已到</span><br></pre></td></tr></table></figure>
+<p><strong>3.我们在ViewController中做如下处理(2)</strong>  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">IBAction</span>)testXXEngineMalloc:(<span class="keyword">id</span>)sender &#123;</span><br><span class="line">   XXEngine *xxEngine = [[XXEngine alloc] init];</span><br><span class="line">   [xxEngine testMallocBlock:<span class="literal">nil</span> success:^(<span class="built_in">BOOL</span> isSuccess) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2秒已到"</span>);</span><br><span class="line">    &#125; failure:^(<span class="built_in">BOOL</span> isSuccess) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2秒结束"</span>);</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时的输出结果大家能想到吗？这里公布答案:  </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">16.416</span> testARC[<span class="number">699</span>:<span class="number">16506</span>] XXEngine init</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">18.417</span> testARC[<span class="number">699</span>:<span class="number">17079</span>] 网络操作完成</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">18.417</span> testARC[<span class="number">699</span>:<span class="number">17079</span>] &lt;__NSGlobalBlock__: <span class="number">0x102bbd190</span>&gt;</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">18.417</span> testARC[<span class="number">699</span>:<span class="number">17079</span>] <span class="number">2</span>秒已到</span><br><span class="line"><span class="number">2016</span><span class="number">-02</span><span class="number">-01</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">18.417</span> testARC[<span class="number">699</span>:<span class="number">17079</span>] XXEngine dealloc</span><br></pre></td></tr></table></figure>
+<p><strong>4.结论</strong>  </p>
+<p>在（1）中，success是一个NSGlobalBlock对象，dispatch对success做了持有操作，GCD我们可以认为是一个系统单例对象，此时XXEngine虽然被释放了，但是success被GCD持有了一份，也就是引用技术+1，所以success这个block不会被释放。GCD持有的对象会被拷贝到堆中，现在GCD执行完成，堆中对象要进行释放，所以知道success完成后，GCD释放。Block可以回调的。  </p>
+<p>在（2）中，GCD对XXEngine进行了持有，也就是引用技术+1，此时ViewController执行完对XXEngine引用技术-1，但是还是无法释放XXEngine，等到GCD结束之后，对XXEngine引用技术-1，此时会进行XXEngine的dealloc</p>
+<h2 id="六-Demo下载"><a href="#六-Demo下载" class="headerlink" title="六. Demo下载"></a>六. Demo下载</h2><p><a href="http://share.weiyun.com/2c416b16d2edb92e70382f40a1f7d910" target="_blank" rel="external">testBlock</a></p>
+<h2 id="七-参考资料"><a href="#七-参考资料" class="headerlink" title="七. 参考资料"></a>七. 参考资料</h2><p>1.<a href="http://www.jianshu.com/p/1d92342c795c" target="_blank" rel="external">Delegate,Notification,Block</a><br>2.<a href="http://www.jianshu.com/p/047463a7ce9b" target="_blank" rel="external">AFNetworking 3.0迁移指南</a><br>3.<a href="http://www.jianshu.com/p/51d04b7639f1" target="_blank" rel="external">Block技巧与底层解析</a><br>4.<a href="http://blog.devtang.com/blog/2013/07/28/a-look-inside-blocks/" target="_blank" rel="external">谈Objective-C Block的实现</a>–&gt;</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/iOS/">iOS</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.iosxxx.com/blog/2016-01-31-blockcong-ru-men-dao-jing-tong.html" data-title="Block那些事 | 向晨宇的技术博客" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/blog/2016-02-25-用最精简的实现iOS9-任务卡动画的竖屏版.html" title="用最精简的代码实现iOS9 任务卡动画的竖屏版">
+  <strong>上一篇：</strong><br/>
+  <span>
+  用最精简的代码实现iOS9 任务卡动画的竖屏版</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/blog/2016-01-23-xcodeda-jian-gao-xiao-de-fu-yong-gong-cheng.html"  title="xcode用workspace搭建高效的复用工程">
+ <strong>下一篇：</strong><br/> 
+ <span>xcode用workspace搭建高效的复用工程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-Block入门"><span class="toc-number">1.</span> <span class="toc-text">一. Block入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-概念"><span class="toc-number">1.1.</span> <span class="toc-text">1.概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-基本的用法"><span class="toc-number">1.2.</span> <span class="toc-text">2.基本的用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-内存的5个区"><span class="toc-number">1.3.</span> <span class="toc-text">3.内存的5个区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-使用场景"><span class="toc-number">1.4.</span> <span class="toc-text">4.使用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-Block原理"><span class="toc-number">2.</span> <span class="toc-text">二. Block原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Block的三种类型"><span class="toc-number">2.1.</span> <span class="toc-text">1.Block的三种类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-类型判断"><span class="toc-number">2.2.</span> <span class="toc-text">2.类型判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-循环引用"><span class="toc-number">2.3.</span> <span class="toc-text">3.循环引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-block原理"><span class="toc-number">2.4.</span> <span class="toc-text">4.__block原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-利用Block如何实现一对多的"><span class="toc-number">3.</span> <span class="toc-text">三. 利用Block如何实现一对多的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-一种是直接Block"><span class="toc-number">3.1.</span> <span class="toc-text">1.一种是直接Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-利用对象做Block"><span class="toc-number">3.2.</span> <span class="toc-text">2.利用对象做Block</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Delegate、Notification、Block"><span class="toc-number">4.</span> <span class="toc-text">四. Delegate、Notification、Block</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-优缺点"><span class="toc-number">4.1.</span> <span class="toc-text">1.优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-个人见解"><span class="toc-number">4.2.</span> <span class="toc-text">2.个人见解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-测试"><span class="toc-number">5.</span> <span class="toc-text">五. 测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-测试一"><span class="toc-number">5.1.</span> <span class="toc-text">1.测试一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-测试二"><span class="toc-number">5.2.</span> <span class="toc-text">2.测试二</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-Demo下载"><span class="toc-number">6.</span> <span class="toc-text">六. Demo下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七-参考资料"><span class="toc-number">7.</span> <span class="toc-text">七. 参考资料</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="github-card">
+<p class="asidetitle">Github 名片</p>
+<div class="github-card" data-github="xcysuccess" data-width="220" data-height="119" data-theme="medium">
+<script type="text/javascript" src="//cdn.jsdelivr.net/github-cards/latest/widget.js" ></script>
+</div>
+  </div>
+
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/iOS/" title="iOS">iOS<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/other/" title="other">other<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://blog.sunnyxx.com/" target="_blank" title="sunnyxx">sunnyxx</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.devtang.com/" target="_blank" title="唐巧大神">唐巧大神</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://beyondvincent.com/" target="_blank" title="破船之家">破船之家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://objccn.io/" target="_blank" title="objc中国">objc中国</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luodichen.com/blog/" target="_blank" title="luodichen">luodichen</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://luoyibu.com/" target="_blank" title="luoyibu">luoyibu</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 古之成大事者，不惟有超世之才，亦必有坚韧不拔之志 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/xcysuccess" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/xcysuccess" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:xcysuccess@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="向晨宇">向晨宇</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'iosxxx';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
